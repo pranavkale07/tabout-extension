@@ -40,10 +40,13 @@ export function getSiteConfig(hostname) {
     return null;
   }
   
+  // Convert to lowercase for case-insensitive domain matching (RFC 1035)
+  const normalizedHostname = hostname.toLowerCase();
+  
   // Handle subdomains (e.g., cn.leetcode.com -> leetcode.com) 
   // Use secure domain matching to prevent malicious domain attacks
   for (const domain of Object.keys(SITE_CONFIGS)) {
-    if (hostname === domain || hostname.endsWith('.' + domain)) {
+    if (normalizedHostname === domain || normalizedHostname.endsWith('.' + domain)) {
       return SITE_CONFIGS[domain];
     }
   }

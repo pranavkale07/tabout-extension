@@ -3,6 +3,10 @@ import { MessageBus, MESSAGE_TYPES } from '../../src/shared/utils/messaging.js';
 describe('messaging', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Ensure window.postMessage is properly mocked
+    if (!window.postMessage.mockClear) {
+      window.postMessage = jest.fn();
+    }
   });
 
   describe('MessageBus', () => {

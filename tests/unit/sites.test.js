@@ -93,8 +93,8 @@ describe('sites', () => {
 
     // Test edge cases
     test('should handle case sensitivity', () => {
-      expect(isSupportedSite('LEETCODE.COM')).toBe(false);
-      expect(isSupportedSite('LeetCode.Com')).toBe(false);
+      expect(isSupportedSite('LEETCODE.COM')).toBe(true);
+      expect(isSupportedSite('LeetCode.Com')).toBe(true);
     });
 
     test('should handle malformed hostnames', () => {

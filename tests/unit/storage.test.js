@@ -148,22 +148,68 @@ describe('storage', () => {
   });
 
   describe('data validation', () => {
-    test('should merge with default settings for invalid data', async () => {
+    test('should validate and sanitize invalid data', async () => {
       const invalidSettings = {
         enabled: 'not a boolean',
-        siteEnabled: 'not an object'
+        siteEnabled: 'not an object',
+        customPairs: 'not an object',
+        debugMode: 'not a boolean'
       };
 
       chrome.storage.sync.get.mockResolvedValue(invalidSettings);
 
       const settings = await StorageManager.getSettings();
       
-      // Should merge invalid data with defaults (no validation)
+      // Should fall back to default values for invalid data
       expect(settings).toEqual({
-        enabled: 'not a boolean', // Invalid data is preserved
-        siteEnabled: 'not an object', // Invalid data is preserved
-        customPairs: {},
-        debugMode: false
+        enabled: true, // Default value for invalid boolean
+        siteEnabled: {
+          'leetcode.com': true // Default value for invalid object
+        },
+        customPairs: {}, // Default value for invalid object
+        debugMode: false // Default value for invalid boolean
+      });
+    });
+
+    test('should preserve valid data', async () => {
+      const validSettings = {
+        enabled: false,
+        siteEnabled: {
+          'leetcode.com': false,
+          'example.com': true
+        },
+        customPairs: { 'python': [['(', ')']] },
+        debugMode: true
+      };
+
+      chrome.storage.sync.get.mockResolvedValue(validSettings);
+
+      const settings = await StorageManager.getSettings();
+      
+      // Should preserve all valid data
+      expect(settings).toEqual(validSettings);
+    });
+
+    test('should handle mixed valid and invalid data', async () => {
+      const mixedSettings = {
+        enabled: false, // Valid
+        siteEnabled: 'not an object', // Invalid
+        customPairs: { 'python': [['(', ')']] }, // Valid
+        debugMode: 'not a boolean' // Invalid
+      };
+
+      chrome.storage.sync.get.mockResolvedValue(mixedSettings);
+
+      const settings = await StorageManager.getSettings();
+      
+      // Should preserve valid data and use defaults for invalid data
+      expect(settings).toEqual({
+        enabled: false, // Preserved valid value
+        siteEnabled: {
+          'leetcode.com': true // Default for invalid object
+        },
+        customPairs: { 'python': [['(', ')']] }, // Preserved valid value
+        debugMode: false // Default for invalid boolean
       });
     });
   });

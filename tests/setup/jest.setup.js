@@ -27,9 +27,6 @@ global.window = {
   }
 };
 
-// Ensure window.postMessage is available globally
-global.window.postMessage = jest.fn();
-
 // Mock DOM APIs
 global.document = {
   querySelector: jest.fn(),
