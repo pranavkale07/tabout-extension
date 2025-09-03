@@ -212,5 +212,36 @@ describe('storage', () => {
         debugMode: false // Default for invalid boolean
       });
     });
+
+    test('should validate customPairs structure', async () => {
+      const settingsWithInvalidCustomPairs = {
+        enabled: true,
+        siteEnabled: { 'leetcode.com': true },
+        customPairs: {
+          'python': [['(', ')']], // Valid
+          'javascript': 'not an array', // Invalid
+          'java': { 'invalid': 'structure' }, // Invalid
+          123: [['[', ']']], // Invalid key type
+          'typescript': [['{', '}']] // Valid
+        },
+        debugMode: false
+      };
+
+      chrome.storage.sync.get.mockResolvedValue(settingsWithInvalidCustomPairs);
+
+      const settings = await StorageManager.getSettings();
+      
+      // Should only preserve valid customPairs entries
+      expect(settings).toEqual({
+        enabled: true,
+        siteEnabled: { 'leetcode.com': true },
+        customPairs: {
+          'python': [['(', ')']], // Preserved valid entry
+          'typescript': [['{', '}']] // Preserved valid entry
+          // Invalid entries (javascript, java, 123) are filtered out
+        },
+        debugMode: false
+      });
+    });
   });
 });

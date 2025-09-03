@@ -53,9 +53,15 @@ function validateSettings(data) {
     }
   }
   
-  // Validate customPairs (must be object)
+  // Validate customPairs (must be object with string keys and array values)
   if (data.customPairs && typeof data.customPairs === 'object' && !Array.isArray(data.customPairs)) {
-    validated.customPairs = data.customPairs;
+    validated.customPairs = {};
+    for (const [lang, pairs] of Object.entries(data.customPairs)) {
+      // Check that lang is a non-empty string (not a numeric string) and pairs is an array
+      if (typeof lang === 'string' && lang.length > 0 && isNaN(Number(lang)) && Array.isArray(pairs)) {
+        validated.customPairs[lang] = pairs;
+      }
+    }
   }
   
   // Validate debugMode (must be boolean)
