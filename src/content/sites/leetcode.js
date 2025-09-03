@@ -51,14 +51,15 @@ export class LeetCodeHandler {
    * Bind single global Tab handler that works with any active editor
    */
   bindGlobalHandler() {
-    // Check if ANY instance has already bound the global handler
+    // Atomic check-and-set to avoid race conditions
     if (window.__TABOUT_GLOBAL_HANDLER_BOUND) {
       if (this.debugMode) {
         console.log('[Tabout][LeetCode] Global handler already bound by another instance');
       }
       return;
     }
-    
+    window.__TABOUT_GLOBAL_HANDLER_BOUND = true;
+
     try {
       // Create the handler function
       const globalTabHandler = (event) => {
@@ -91,11 +92,11 @@ export class LeetCodeHandler {
         }
       };
       
-      // Bind to document with capture
+      // Bind to document with capture and retain reference for cleanup
       document.addEventListener('keydown', globalTabHandler, true);
+      window.__TABOUT_GLOBAL_TAB_HANDLER = globalTabHandler;
       
-      // Mark globally that handler is bound
-      window.__TABOUT_GLOBAL_HANDLER_BOUND = true;
+      // Mark global handler instance
       window.__TABOUT_HANDLER_INSTANCE = this;
       
       // Debug: Confirm global instance assignment
@@ -112,6 +113,8 @@ export class LeetCodeHandler {
       }
     } catch (error) {
       console.error('[Tabout][LeetCode] Failed to bind global handler:', error);
+      // Revert flag on failure
+      window.__TABOUT_GLOBAL_HANDLER_BOUND = false;
     }
   }
   
@@ -344,8 +347,13 @@ export class LeetCodeHandler {
       this.mutationObserver = null;
     }
     
-    // Note: Global event listener cleanup would need to be handled
-    // differently since it's bound to document, not this instance
+    // Cleanup global listener if this instance owns it
+    if (window.__TABOUT_GLOBAL_TAB_HANDLER) {
+      document.removeEventListener('keydown', window.__TABOUT_GLOBAL_TAB_HANDLER, true);
+      window.__TABOUT_GLOBAL_TAB_HANDLER = null;
+    }
+    window.__TABOUT_GLOBAL_HANDLER_BOUND = false;
+    window.__TABOUT_HANDLER_INSTANCE = null;
     if (this.debugMode) {
       console.log('[Tabout][LeetCode] Handler cleaned up');
     }

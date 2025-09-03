@@ -11,7 +11,6 @@
 export const MESSAGE_TYPES = {
   // Content script -> Page script
   SET_ENABLED: 'TABOUT_SET_ENABLED',
-  SET_SITE_ENABLED: 'TABOUT_SET_SITE_ENABLED',
   SET_DEBUG_MODE: 'TABOUT_SET_DEBUG_MODE',
   
   // Page script -> Content script
