@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "LeetCode Tabout",
+  "name": "TabOut for LeetCode",
   "version": "0.1.0",
   "description": "Tab out of brackets/quotes in LeetCode's code editor",
   "permissions": [
@@ -15,7 +15,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "LeetCode Tabout"
+    "default_title": "TabOut for LeetCode"
   },
   "host_permissions": [
     "https://leetcode.com/*",
@@ -33,7 +33,7 @@
       ],
       "js": ["content.js"],
       "run_at": "document_idle",
-      "all_frames": true
+      "all_frames": false
     }
   ],
   "options_ui": {
