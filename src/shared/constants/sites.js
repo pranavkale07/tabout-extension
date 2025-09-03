@@ -35,6 +35,11 @@ export const SITE_CONFIGS = {
  * @returns {SiteConfig|null} - Site configuration or null if not supported
  */
 export function getSiteConfig(hostname) {
+  // Handle null/undefined hostnames
+  if (!hostname || typeof hostname !== 'string') {
+    return null;
+  }
+  
   // Handle subdomains (e.g., cn.leetcode.com -> leetcode.com) 
   // Use secure domain matching to prevent malicious domain attacks
   for (const domain of Object.keys(SITE_CONFIGS)) {
