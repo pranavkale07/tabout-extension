@@ -28,13 +28,13 @@ class OptionsPage {
     this.elements = {
       globalEnabled: document.getElementById('globalEnabled'),
       debugMode: document.getElementById('debugMode'),
-      siteSettings: document.getElementById('siteSettings'),
       status: document.getElementById('status'),
       statusPill: document.getElementById('statusPill'),
       linkGithub: document.getElementById('linkGithub'),
       linkReport: document.getElementById('linkReport'),
       linkFeature: document.getElementById('linkFeature'),
-      linkDonate: document.getElementById('linkDonate')
+      linkDonate: document.getElementById('linkDonate'),
+      linkRequestPlatform: document.getElementById('linkRequestPlatform')
     };
   }
   
@@ -43,59 +43,42 @@ class OptionsPage {
    * Single source of truth from SITE_CONFIGS
    */
   generateSiteSettings() {
+    const container = document.querySelector('.supported-sites');
+    if (!container) return;
+    
     const supportedDomains = getSupportedDomains();
     
-    // Hide site settings section since we only support LeetCode for now
-    // TODO: Remove this when adding more sites
+    // For now, we only support LeetCode and it's already in the HTML
+    // When adding more sites, we can dynamically add them here
     if (supportedDomains.length <= 1) {
-      this.elements.siteSettings.innerHTML = '<p style="color: #666; font-style: italic; text-align: center; padding: 20px;">Site-specific settings will appear here when more platforms are supported.</p>';
-      return;
+      return; // LeetCode is already displayed in HTML
     }
     
+    // Future: Add more sites dynamically
     supportedDomains.forEach(domain => {
+      if (domain === 'leetcode.com') return; // Already in HTML
+      
       const siteConfig = getSiteConfig(domain);
       const siteName = this.formatSiteName(domain);
       
-      // Create setting container
-      const settingDiv = document.createElement('div');
-      settingDiv.className = 'setting';
+      // Create site item
+      const siteItem = document.createElement('div');
+      siteItem.className = 'site-item';
       
-      // Create setting info
-      const settingInfo = document.createElement('div');
-      settingInfo.className = 'setting-info';
+      const siteNameSpan = document.createElement('span');
+      siteNameSpan.className = 'site-name';
+      siteNameSpan.textContent = siteName;
       
-      const titleElement = document.createElement('h3');
-      titleElement.textContent = siteName;
+      const siteStatusSpan = document.createElement('span');
+      siteStatusSpan.className = 'site-status';
+      siteStatusSpan.textContent = 'Active';
       
-      const descElement = document.createElement('p');
-      descElement.textContent = `Enable tabout on ${domain} (${siteConfig.editor} editor)`;
+      siteItem.appendChild(siteNameSpan);
+      siteItem.appendChild(siteStatusSpan);
       
-      settingInfo.appendChild(titleElement);
-      settingInfo.appendChild(descElement);
-      
-      // Create toggle
-      const toggleLabel = document.createElement('label');
-      toggleLabel.className = 'toggle';
-      
-      const toggleInput = document.createElement('input');
-      toggleInput.type = 'checkbox';
-      toggleInput.id = `${domain.replace('.', '')}Enabled`;
-      
-      const slider = document.createElement('span');
-      slider.className = 'slider';
-      
-      toggleLabel.appendChild(toggleInput);
-      toggleLabel.appendChild(slider);
-      
-      // Assemble setting
-      settingDiv.appendChild(settingInfo);
-      settingDiv.appendChild(toggleLabel);
-      
-      // Add to container
-      this.elements.siteSettings.appendChild(settingDiv);
-      
-      // Store reference for easy access
-      this.siteElements.set(domain, toggleInput);
+      // Insert before the CTA paragraph
+      const ctaParagraph = container.querySelector('.site-cta');
+      container.insertBefore(siteItem, ctaParagraph);
     });
   }
   
@@ -181,9 +164,13 @@ class OptionsPage {
       const featureUrl = `${repo}/issues/new?labels=enhancement&title=%5BFeature%5D%3A%20&body=Describe%20the%20use%20case%20and%20benefit.`;
       this.elements.linkFeature.href = featureUrl;
     }
+    if (this.elements.linkRequestPlatform) {
+      const platformUrl = `${repo}/issues/new?labels=enhancement&title=%5BPlatform%20Support%5D%3A%20&body=Which%20platform%20should%20TabOut%20support%3F%20Please%20add%20links%20and%20details.`;
+      this.elements.linkRequestPlatform.href = platformUrl;
+    }
     if (this.elements.linkDonate) {
       // Temporary donation link
-      this.elements.linkDonate.href = 'https://www.buymeacoffee.com/';
+      this.elements.linkDonate.href = 'https://www.buymeacoffee.com/prxnav';
     }
   }
   
