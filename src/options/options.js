@@ -29,7 +29,12 @@ class OptionsPage {
       globalEnabled: document.getElementById('globalEnabled'),
       debugMode: document.getElementById('debugMode'),
       siteSettings: document.getElementById('siteSettings'),
-      status: document.getElementById('status')
+      status: document.getElementById('status'),
+      statusPill: document.getElementById('statusPill'),
+      linkGithub: document.getElementById('linkGithub'),
+      linkReport: document.getElementById('linkReport'),
+      linkFeature: document.getElementById('linkFeature'),
+      linkDonate: document.getElementById('linkDonate')
     };
   }
   
@@ -118,6 +123,13 @@ class OptionsPage {
       this.elements.globalEnabled.checked = settings.enabled;
       this.elements.debugMode.checked = settings.debugMode;
       
+      // Update header status pill
+      if (this.elements.statusPill) {
+        this.elements.statusPill.textContent = settings.enabled ? 'Enabled' : 'Disabled';
+        this.elements.statusPill.classList.toggle('enabled', !!settings.enabled);
+        this.elements.statusPill.classList.toggle('disabled', !settings.enabled);
+      }
+      
       // Set site-specific settings dynamically
       this.siteElements.forEach((element, domain) => {
         element.checked = settings.siteEnabled[domain] ?? true;
@@ -136,6 +148,13 @@ class OptionsPage {
     // Global settings
     this.elements.globalEnabled.addEventListener('change', () => {
       this.saveSetting('enabled', this.elements.globalEnabled.checked);
+      // Reflect immediately on status pill
+      if (this.elements.statusPill) {
+        const enabled = this.elements.globalEnabled.checked;
+        this.elements.statusPill.textContent = enabled ? 'Enabled' : 'Disabled';
+        this.elements.statusPill.classList.toggle('enabled', enabled);
+        this.elements.statusPill.classList.toggle('disabled', !enabled);
+      }
     });
     
     this.elements.debugMode.addEventListener('change', () => {
@@ -148,6 +167,24 @@ class OptionsPage {
         this.saveSiteSetting(domain, element.checked);
       });
     });
+    
+    // External links
+    const repo = 'https://github.com/pranavkale07/tabout-extension';
+    if (this.elements.linkGithub) {
+      this.elements.linkGithub.href = repo;
+    }
+    if (this.elements.linkReport) {
+      const issueUrl = `${repo}/issues/new?labels=bug&title=%5BBug%5D%3A%20&body=Describe%20the%20bug%20with%20steps%20to%20reproduce%2C%20expected%20vs%20actual%2C%20and%20environment.`;
+      this.elements.linkReport.href = issueUrl;
+    }
+    if (this.elements.linkFeature) {
+      const featureUrl = `${repo}/issues/new?labels=enhancement&title=%5BFeature%5D%3A%20&body=Describe%20the%20use%20case%20and%20benefit.`;
+      this.elements.linkFeature.href = featureUrl;
+    }
+    if (this.elements.linkDonate) {
+      // Temporary donation link
+      this.elements.linkDonate.href = 'https://www.buymeacoffee.com/';
+    }
   }
   
   /**

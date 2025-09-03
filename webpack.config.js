@@ -46,7 +46,9 @@ module.exports = {
       patterns: [
         { from: 'src/manifest.json', to: 'manifest.json' },
         { from: 'src/options/options.html', to: 'options.html' },
+        { from: 'src/options/options.css', to: 'options.css' },
         { from: 'src/popup/popup.html', to: 'popup.html' },
+        { from: 'src/popup/popup.css', to: 'popup.css' },
         { from: 'src/assets', to: 'assets', noErrorOnMissing: true }
       ]
     })
