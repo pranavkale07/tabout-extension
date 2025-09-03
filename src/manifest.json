@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "LeetCode Tabout",
+  "version": "0.1.0",
+  "description": "Tab out of brackets/quotes in LeetCode's code editor",
+  "permissions": [
+    "storage",
+    "scripting",
+    "tabs"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "LeetCode Tabout"
+  },
+  "host_permissions": [
+    "https://leetcode.com/*",
+    "https://*.leetcode.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://leetcode.com/problems/*",
+        "https://leetcode.com/contest/*",
+        "https://leetcode.com/playground/*",
+        "https://*.leetcode.com/problems/*",
+        "https://*.leetcode.com/contest/*",
+        "https://*.leetcode.com/playground/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["page-script.js"],
+      "matches": [
+        "https://leetcode.com/*",
+        "https://*.leetcode.com/*"
+      ]
+    }
+  ]
+}

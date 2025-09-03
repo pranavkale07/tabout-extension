@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Universal Tabout - Options</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 300;
+    }
+    
+    .header p {
+      margin: 10px 0 0;
+      opacity: 0.9;
+    }
+    
+    .content {
+      padding: 30px;
+    }
+    
+    .section {
+      margin-bottom: 30px;
+    }
+    
+    .section h2 {
+      margin: 0 0 15px;
+      font-size: 18px;
+      color: #333;
+    }
+    
+    .setting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .setting:last-child {
+      border-bottom: none;
+    }
+    
+    .setting-info h3 {
+      margin: 0 0 5px;
+      font-size: 16px;
+      color: #333;
+    }
+    
+    .setting-info p {
+      margin: 0;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .toggle {
+      position: relative;
+      width: 50px;
+      height: 26px;
+    }
+    
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 26px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: #667eea;
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+    
+    .status {
+      text-align: center;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 20px;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .status.show {
+      opacity: 1;
+    }
+    
+    .status.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 14px;
+      background-color: #f8f9fa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Universal Tabout</h1>
+      <p>Tab out of brackets and quotes in code editors</p>
+    </div>
+    
+    <div class="content">
+      <div class="section">
+        <h2>General Settings</h2>
+        
+        <div class="setting">
+          <div class="setting-info">
+            <h3>Enable Tabout</h3>
+            <p>Globally enable/disable tabout functionality</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="globalEnabled">
+            <span class="slider"></span>
+          </label>
+        </div>
+        
+        <div class="setting">
+          <div class="setting-info">
+            <h3>Debug Mode</h3>
+            <p>Enable console logging for troubleshooting</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="debugMode">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>Site Settings (Future)</h2>
+        <div id="siteSettings">
+          <!-- Site settings will be dynamically generated here when more sites are added -->
+        </div>
+      </div>
+      
+      <div id="status" class="status"></div>
+    </div>
+    
+    <div class="footer">
+      Universal Tabout Extension v0.1.0
+    </div>
+  </div>
+  
+  <script src="options.js"></script>
+</body>
+</html>
