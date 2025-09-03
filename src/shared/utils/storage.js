@@ -31,6 +31,48 @@ export const DEFAULT_SETTINGS = {
 };
 
 /**
+ * Validate and sanitize settings data
+ * @param {any} data - Raw data from storage
+ * @returns {ExtensionSettings} - Validated settings
+ */
+function validateSettings(data) {
+  const validated = { ...DEFAULT_SETTINGS };
+  
+  // Validate enabled (must be boolean)
+  if (typeof data.enabled === 'boolean') {
+    validated.enabled = data.enabled;
+  }
+  
+  // Validate siteEnabled (must be object with boolean values)
+  if (data.siteEnabled && typeof data.siteEnabled === 'object' && !Array.isArray(data.siteEnabled)) {
+    validated.siteEnabled = {};
+    for (const [domain, enabled] of Object.entries(data.siteEnabled)) {
+      if (typeof domain === 'string' && typeof enabled === 'boolean') {
+        validated.siteEnabled[domain] = enabled;
+      }
+    }
+  }
+  
+  // Validate customPairs (must be object with string keys and array values)
+  if (data.customPairs && typeof data.customPairs === 'object' && !Array.isArray(data.customPairs)) {
+    validated.customPairs = {};
+    for (const [lang, pairs] of Object.entries(data.customPairs)) {
+      // Check that lang is a non-empty string (not a numeric string) and pairs is an array
+      if (typeof lang === 'string' && lang.length > 0 && isNaN(Number(lang)) && Array.isArray(pairs)) {
+        validated.customPairs[lang] = pairs;
+      }
+    }
+  }
+  
+  // Validate debugMode (must be boolean)
+  if (typeof data.debugMode === 'boolean') {
+    validated.debugMode = data.debugMode;
+  }
+  
+  return validated;
+}
+
+/**
  * Storage manager for extension settings
  */
 export class StorageManager {
@@ -54,7 +96,7 @@ export class StorageManager {
         return DEFAULT_SETTINGS;
       }
       const stored = await chrome.storage.sync.get(DEFAULT_SETTINGS);
-      return { ...DEFAULT_SETTINGS, ...stored };
+      return validateSettings(stored);
     } catch (error) {
       console.error('[Tabout] Failed to get settings:', error);
       return DEFAULT_SETTINGS;
