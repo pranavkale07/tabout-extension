@@ -1,7 +1,7 @@
 {
-  "name": "universal-tabout",
+  "name": "Tabout for LeetCode",
   "version": "0.1.0",
-  "description": "Tab out of brackets/quotes in code editors across coding platforms",
+  "description": "Tab out of brackets, quotes, etc in LeetCode's code editor",
   "scripts": {
     "build": "webpack --mode=production",
     "build:dev": "webpack --mode=development",
