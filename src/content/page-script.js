@@ -32,7 +32,9 @@ import { getSiteConfig } from '../shared/constants/sites.js';
     
     // CRITICAL FIX: Prevent multiple handler instances
     if (currentHandler && window.__TABOUT_HANDLER_INSTANCE) {
-      console.log('[Tabout][Page] Handler already initialized, skipping');
+      if (debugMode) {
+        console.log('[Tabout][Page] Handler already initialized, skipping');
+      }
       return;
     }
     
@@ -44,12 +46,16 @@ import { getSiteConfig } from '../shared/constants/sites.js';
           if (!currentHandler) {
             currentHandler = new LeetCodeHandler();
             await currentHandler.initialize();
-            console.log('[Tabout][Page] New handler created and initialized');
+            if (debugMode) {
+              console.log('[Tabout][Page] New handler created and initialized');
+            }
           }
           
           // After initialization, ensure currentHandler points to global instance
           if (window.__TABOUT_HANDLER_INSTANCE && window.__TABOUT_HANDLER_INSTANCE !== currentHandler) {
-            console.log('[Tabout][Page] Updating currentHandler to point to global instance');
+            if (debugMode) {
+              console.log('[Tabout][Page] Updating currentHandler to point to global instance');
+            }
             currentHandler = window.__TABOUT_HANDLER_INSTANCE;
           }
           
@@ -101,39 +107,49 @@ import { getSiteConfig } from '../shared/constants/sites.js';
     const wasGlobalEnabled = globalEnabled;
     globalEnabled = global && site;
     
-    // Always log page-level enable changes
-    console.log(`[Tabout][Page] handleSetEnabled called: ${wasGlobalEnabled} -> ${globalEnabled}`, {
-      payload,
-      hasHandler: !!currentHandler,
-      handlerType: currentHandler?.constructor?.name,
-      handlerSetEnabledExists: !!(currentHandler && typeof currentHandler.setEnabled === 'function')
-    });
+    // Only log page-level enable changes in debug mode
+    if (debugMode) {
+      console.log(`[Tabout][Page] handleSetEnabled called: ${wasGlobalEnabled} -> ${globalEnabled}`, {
+        payload,
+        hasHandler: !!currentHandler,
+        handlerType: currentHandler?.constructor?.name,
+        handlerSetEnabledExists: !!(currentHandler && typeof currentHandler.setEnabled === 'function')
+      });
+    }
     
     // CRITICAL FIX: Always use the global handler instance for setEnabled
     const handlerToUpdate = window.__TABOUT_HANDLER_INSTANCE || currentHandler;
     
-    console.log('[Tabout][Page] Handler instances:', {
-      currentHandler: currentHandler,
-      globalHandler: window.__TABOUT_HANDLER_INSTANCE,
-      willUpdateGlobal: handlerToUpdate === window.__TABOUT_HANDLER_INSTANCE,
-      usingFallback: handlerToUpdate === currentHandler && !window.__TABOUT_HANDLER_INSTANCE
-    });
+    if (debugMode) {
+      console.log('[Tabout][Page] Handler instances:', {
+        currentHandler: currentHandler,
+        globalHandler: window.__TABOUT_HANDLER_INSTANCE,
+        willUpdateGlobal: handlerToUpdate === window.__TABOUT_HANDLER_INSTANCE,
+        usingFallback: handlerToUpdate === currentHandler && !window.__TABOUT_HANDLER_INSTANCE
+      });
+    }
     
     if (handlerToUpdate && typeof handlerToUpdate.setEnabled === 'function') {
-      console.log('[Tabout][Page] Calling setEnabled on', handlerToUpdate === window.__TABOUT_HANDLER_INSTANCE ? 'GLOBAL' : 'LOCAL', 'handler with:', globalEnabled);
+      if (debugMode) {
+        console.log('[Tabout][Page] Calling setEnabled on', handlerToUpdate === window.__TABOUT_HANDLER_INSTANCE ? 'GLOBAL' : 'LOCAL', 'handler with:', globalEnabled);
+      }
       handlerToUpdate.setEnabled(globalEnabled);
       
       // Also update currentHandler if it's different (for consistency)
       if (currentHandler && currentHandler !== handlerToUpdate && typeof currentHandler.setEnabled === 'function') {
-        console.log('[Tabout][Page] Also updating local handler for consistency');
+        if (debugMode) {
+          console.log('[Tabout][Page] Also updating local handler for consistency');
+        }
         currentHandler.setEnabled(globalEnabled);
       }
     } else {
-      console.warn('[Tabout][Page] Cannot set enabled - no handler or setEnabled method', {
-        hasCurrentHandler: !!currentHandler,
-        hasGlobalHandler: !!window.__TABOUT_HANDLER_INSTANCE,
-        handlerToUpdate: handlerToUpdate
-      });
+      if (debugMode) {
+        console.warn('[Tabout][Page] Cannot set enabled - no handler or setEnabled method', {
+          hasCurrentHandler: !!currentHandler,
+          hasGlobalHandler: !!window.__TABOUT_HANDLER_INSTANCE,
+          handlerToUpdate: handlerToUpdate
+        });
+      }
     }
     
     if (debugMode) {
@@ -155,7 +171,9 @@ import { getSiteConfig } from '../shared/constants/sites.js';
       currentHandler.setDebugMode(debugMode);
     }
     
-    console.log('[Tabout][Page] Debug mode:', debugMode);
+    if (debugMode) {
+      console.log('[Tabout][Page] Debug mode:', debugMode);
+    }
   }
   
   // Initialize when DOM is ready
@@ -173,7 +191,9 @@ import { getSiteConfig } from '../shared/constants/sites.js';
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
       // Tab became visible - request current settings in case we missed storage changes
-      console.log('[Tabout][Page] Tab became visible, requesting current settings');
+      if (debugMode) {
+        console.log('[Tabout][Page] Tab became visible, requesting current settings');
+      }
       MessageBus.sendToContent(MESSAGE_TYPES.PING, { requestSettings: true });
     }
   });

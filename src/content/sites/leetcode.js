@@ -100,11 +100,13 @@ export class LeetCodeHandler {
       window.__TABOUT_HANDLER_INSTANCE = this;
       
       // Debug: Confirm global instance assignment
-      console.log('[Tabout][LeetCode] Global handler instance set', {
-        globalInstance: window.__TABOUT_HANDLER_INSTANCE,
-        thisInstance: this,
-        areEqual: window.__TABOUT_HANDLER_INSTANCE === this
-      });
+      if (this.debugMode) {
+        console.log('[Tabout][LeetCode] Global handler instance set', {
+          globalInstance: window.__TABOUT_HANDLER_INSTANCE,
+          thisInstance: this,
+          areEqual: window.__TABOUT_HANDLER_INSTANCE === this
+        });
+      }
       
       this.globalHandlerBound = true;
       
@@ -303,21 +305,15 @@ export class LeetCodeHandler {
    * @param {boolean} enabled - Whether tabout is enabled
    */
   setEnabled(enabled) {
-    const wasEnabled = this.enabled;
     this.enabled = !!enabled;
     
-    // Always log setEnabled calls to track what's happening
-    console.log(`[Tabout][LeetCode] setEnabled called: ${wasEnabled} -> ${this.enabled}`, {
-      handlerInstance: this,
-      isGlobalInstance: window.__TABOUT_HANDLER_INSTANCE === this,
-      timestamp: Date.now()
-    });
-    
+    // Only log setEnabled calls in debug mode
     if (this.debugMode) {
-      // Debug: Track rapid changes that might indicate a bug
-      if (wasEnabled !== this.enabled) {
-        console.trace('[Tabout][LeetCode] Enable state changed - call stack:');
-      }
+      console.log(`[Tabout][LeetCode] setEnabled called: ${enabled}`, {
+        handlerInstance: this,
+        isGlobalInstance: window.__TABOUT_HANDLER_INSTANCE === this,
+        timestamp: Date.now()
+      });
     }
   }
   

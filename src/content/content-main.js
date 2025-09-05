@@ -11,6 +11,7 @@ class ContentScript {
     this.siteConfig = getSiteConfig(this.currentSite);
     this.pageScriptInjected = false;
     this.isUnloading = false;
+    this.debugMode = false;
 
     // Avoid work during unload/navigation where extension context may be invalid
     window.addEventListener('beforeunload', () => {
@@ -25,11 +26,17 @@ class ContentScript {
     if (this.isUnloading) return;
     // Check if this site is supported
     if (!isSupportedSite(this.currentSite)) {
-      console.log('[Tabout] Site not supported:', this.currentSite);
+      // Only log in debug mode
+      if (this.debugMode) {
+        console.log('[Tabout] Site not supported:', this.currentSite);
+      }
       return;
     }
     
-    console.log('[Tabout] Initializing on:', this.currentSite);
+    // Only log initialization in debug mode
+    if (this.debugMode) {
+      console.log('[Tabout] Initializing on:', this.currentSite);
+    }
     
     // Inject page script
     await this.injectPageScript();
@@ -60,7 +67,9 @@ class ContentScript {
       script.type = 'text/javascript';
       script.onload = () => {
         this.pageScriptInjected = true;
-        console.log('[Tabout] Page script injected successfully');
+        if (this.debugMode) {
+          console.log('[Tabout] Page script injected successfully');
+        }
         script.remove(); // Clean up
       };
       script.onerror = () => {
@@ -100,6 +109,9 @@ class ContentScript {
       const settings = await StorageManager.getSettings();
       const siteEnabled = await StorageManager.isEnabledForSite(this.currentSite);
       
+      // Store debug mode for this instance
+      this.debugMode = settings.debugMode;
+      
       // Send settings to page
       MessageBus.sendToPage(MESSAGE_TYPES.SET_ENABLED, {
         globalEnabled: settings.enabled,
@@ -111,10 +123,13 @@ class ContentScript {
         debugMode: settings.debugMode
       });
       
-      console.log('[Tabout] Initial settings sent:', { 
-        enabled: settings.enabled && siteEnabled,
-        debugMode: settings.debugMode 
-      });
+      // Only log in debug mode
+      if (this.debugMode) {
+        console.log('[Tabout] Initial settings sent:', { 
+          enabled: settings.enabled && siteEnabled,
+          debugMode: settings.debugMode 
+        });
+      }
     } catch (error) {
       console.error('[Tabout] Failed to send initial settings:', error);
     }
@@ -134,12 +149,14 @@ class ContentScript {
           const currentSettings = await StorageManager.getSettings();
           const globalEnabled = changes.enabled?.newValue ?? currentSettings.enabled;
           
-          console.log('[Tabout][Content] Settings change:', { 
-            changes, 
-            globalEnabled, 
-            siteEnabled, 
-            site: this.currentSite 
-          });
+          if (this.debugMode) {
+            console.log('[Tabout][Content] Settings change:', { 
+              changes, 
+              globalEnabled, 
+              siteEnabled, 
+              site: this.currentSite 
+            });
+          }
           
           MessageBus.sendToPage(MESSAGE_TYPES.SET_ENABLED, {
             globalEnabled,
@@ -166,17 +183,23 @@ class ContentScript {
     MessageBus.onMessageFromPage(async (message) => {
       switch (message.type) {
         case MESSAGE_TYPES.EDITOR_DETECTED:
-          console.log('[Tabout] Editor detected on page:', message.payload);
+          if (this.debugMode) {
+            console.log('[Tabout] Editor detected on page:', message.payload);
+          }
           break;
           
         case MESSAGE_TYPES.TABOUT_APPLIED:
-          console.log('[Tabout] Tabout applied:', message.payload);
+          if (this.debugMode) {
+            console.log('[Tabout] Tabout applied:', message.payload);
+          }
           break;
           
         case MESSAGE_TYPES.PING:
           // CRITICAL FIX: If page script requests settings, send current settings
           if (message.payload?.requestSettings) {
-            console.log('[Tabout][Content] Page script requesting current settings for cross-tab sync');
+            if (this.debugMode) {
+              console.log('[Tabout][Content] Page script requesting current settings for cross-tab sync');
+            }
             if (!this.isUnloading) {
               await this.sendCurrentSettingsToPage();
             }
@@ -187,7 +210,9 @@ class ContentScript {
           break;
           
         default:
-          console.log('[Tabout] Unknown message from page:', message);
+          if (this.debugMode) {
+            console.log('[Tabout] Unknown message from page:', message);
+          }
       }
     });
   }
@@ -200,11 +225,13 @@ class ContentScript {
       const settings = await StorageManager.getSettings();
       const siteEnabled = await StorageManager.isEnabledForSite(this.currentSite);
       
-      console.log('[Tabout][Content] Sending current settings to page script:', {
-        globalEnabled: settings.enabled,
-        siteEnabled,
-        debugMode: settings.debugMode
-      });
+      if (this.debugMode) {
+        console.log('[Tabout][Content] Sending current settings to page script:', {
+          globalEnabled: settings.enabled,
+          siteEnabled,
+          debugMode: settings.debugMode
+        });
+      }
       
       // Send current enabled state
       MessageBus.sendToPage(MESSAGE_TYPES.SET_ENABLED, {
