@@ -17,8 +17,33 @@ body {
 }
 
 .header {
-  padding: 20px 24px;
+  padding: 15px 24px;
   border-bottom: 1px solid #1f2937; /* neutral-800 */
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title-section .header-icon {
+  margin-top: 5px; /* Adjust to align with text baseline */
+}
+
+.header-icon {
+  width: 48px;
+  height: 36px; /* 4:3 aspect ratio (48 * 3/4 = 36) */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+  object-fit: contain; /* Maintain aspect ratio without stretching */
 }
 
 .header h1 {
@@ -29,7 +54,7 @@ body {
 }
 
 .header p {
-  margin: 8px 0 0;
+  margin: -2px 0 0;
   color: #9ca3af; /* neutral-400 */
 }
 
