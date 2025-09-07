@@ -1,53 +1,72 @@
-# LeetCode Tabout Extension
+<div align="center">
 
-A Chrome extension that adds "tab out" functionality to LeetCode's code editor, with an extensible architecture for future platform additions.
+![TabOut for LeetCode](src/assets/logos/tabout-icon-128_crp.png)
+
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-v0.1.0-green)](https://chromewebstore.google.com/detail/tabout-for-leetcode/eecmlpblnpechggegghledjledbkebfp)
+[![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/mv3/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+**TabOut** adds intelligent "tab‑out" to LeetCode's editor. Forget arrow keys — just hit Tab and fly past ) ] } ' " > , ;
+
+
+
+</div>
 
 ## Features
 
-- **LeetCode Support**: Works specifically with LeetCode's Monaco Editor
-- **Smart Detection**: Automatically detects Monaco Editor, CodeMirror, and other editors
-- **Configurable**: Per-site enable/disable and custom bracket pairs
-- **Language Aware**: Context-specific bracket pairs (generics in Java/C++, template literals in JS)
+- **Smart tab‑out** for `()`, `[]`, `{}`, `' '`, `" "`, `<>`, commas and semicolons
+- **Multiple cursor** support
+- **Works across LeetCode**: problems, contests, playground
+- **Lightweight**: no UI clutter, minimal overhead
+- **Privacy-focused**: no data collection, local processing only
 
-## Supported Sites
+## Installation
 
-- ✅ **LeetCode** (leetcode.com) - Monaco Editor
+### Chrome Web Store (Recommended)
+[![Install from Chrome Web Store](https://img.shields.io/badge/Install-Chrome%20Web%20Store-4285F4?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/tabout-for-leetcode/eecmlpblnpechggegghledjledbkebfp)
 
-*The extensible architecture allows for easy addition of new coding platforms in the future.*
+### Manual Installation
+1. Clone this repository
+2. Run `npm install && npm run build`
+3. Open `chrome://extensions` → enable Developer mode
+4. Click "Load unpacked" → select the `dist/` folder
 
-## Development
+### Controls
+- **Popup**: Click the extension icon to quickly enable/disable
+- **Options**: Right-click extension → Options for advanced settings
 
-### Setup
-```bash
-npm install
-```
+## Privacy & Permissions
 
-### Build
-```bash
-# Development build
-npm run build:dev
+### Data Collection
+- **No personal data** or problem content is collected or transmitted
+- **Local processing only** - all tab-out logic runs in your browser
+- **Minimal storage** - only user preferences saved locally via Chrome sync
 
-# Production build
-npm run build
+### Required Permissions
+- **Host (leetcode.com)**: Run only on LeetCode pages to access the editor context
+- **Scripting**: Inject a small page script to access Monaco APIs
+- **Storage**: Save minimal preferences (enable/disable, debug) in Chrome sync
+- **Tabs**: Read the active tab's hostname in the popup to display site status
 
-# Watch mode (rebuilds on changes)
-npm run build:watch
-```
+## Contributing
 
-### Load Extension
-1. Run `npm run build`
-2. Open Chrome Extensions page (`chrome://extensions/`)
-3. Enable "Developer mode"
-4. Click "Load unpacked" and select the `dist/` folder
+We welcome contributions! To report bugs, fix issues, or add features, visit the [Issues](https://github.com/pranavkale07/tabout-extension/issues) page. Please review our [Contribution Guide](CONTRIBUTING.md) for setup and contribution instructions.
 
-## How It Works
 
-1. **Content Script** runs on matching pages and injects the page script
-2. **Page Script** runs in page context to access editor APIs (Monaco, CodeMirror)
-3. **Site Handlers** implement editor-specific tabout logic
-4. **Core Engine** provides universal tabout decision logic
-5. **Options Page** allows users to configure settings
+## Future Enhancements
+
+- **Firefox Support**: MV3 compatibility for Firefox 109+
+- **More Platforms**: Support for other coding platforms (GeeksForGeeks, takeuforward, HackerRank, CodeChef, etc.)
+- **Custom Delimiters**: User-defined tab-out patterns
+- **Keyboard Shortcuts**: Customizable key bindings
+
+## Acknowledgments
+
+Special thanks to:
+- [TabOut (VS Code Extension)](https://marketplace.visualstudio.com/items?itemName=albert.TabOut) - The VS Code extension that inspired this project
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/) - The powerful code editor that powers LeetCode and VS Code
+- The open-source community for inspiration and feedback
 
 ## License
 
-MIT
+MIT License - see [LICENSE](LICENSE) file for details.
