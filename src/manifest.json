@@ -6,7 +6,7 @@
   "permissions": [
     "storage",
     "scripting",
-    "tabs"
+    "activeTab"
   ],
   "icons": {
     "16": "assets/icons/icon-16.png",

@@ -84,3 +84,5 @@ temp/
 
 # Local development
 .local/
+
+releases/
