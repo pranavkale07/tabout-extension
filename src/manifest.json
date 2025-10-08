@@ -1,12 +1,12 @@
 {
   "manifest_version": 3,
   "name": "TabOut for LeetCode",
-  "version": "0.1.0",
+  "version": "{{VERSION}}",
   "description": "Tab out of brackets, quotes, etc in LeetCode's code editor",
   "permissions": [
     "storage",
     "scripting",
-    "tabs"
+    "activeTab"
   ],
   "icons": {
     "16": "assets/icons/icon-16.png",
