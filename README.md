@@ -2,7 +2,7 @@
 
 ![TabOut for LeetCode](src/assets/logos/tabout-icon-128_crp.png)
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-v0.1.0-green)](https://chromewebstore.google.com/detail/tabout-for-leetcode/eecmlpblnpechggegghledjledbkebfp)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-v0.1.1-green)](https://chromewebstore.google.com/detail/tabout-for-leetcode/eecmlpblnpechggegghledjledbkebfp)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/mv3/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -46,7 +46,7 @@
 - **Host (leetcode.com)**: Run only on LeetCode pages to access the editor context
 - **Scripting**: Inject a small page script to access Monaco APIs
 - **Storage**: Save minimal preferences (enable/disable, debug) in Chrome sync
-- **Tabs**: Read the active tab's hostname in the popup to display site status
+- **ActiveTab**: Read the active tab's hostname in the popup to display site status (privacy-focused alternative to broad tabs permission)
 
 ## Contributing
 

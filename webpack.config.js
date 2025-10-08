@@ -4,8 +4,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const fs = require('fs');
 
 // Read version from package.json once
-const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-const version = packageJson.version;
+const { version } = require('./package.json');
 
 module.exports = {
   entry: {
@@ -66,7 +65,7 @@ module.exports = {
           to: 'options.html',
           transform: (content) => {
             // Replace version placeholder with actual version
-            return content.toString().replace('{{VERSION}}', version);
+            return content.toString().replace(/\{\{VERSION\}\}/g, version);
           }
         },
         { from: 'src/options/options.css', to: 'options.css' },
