@@ -1,6 +1,11 @@
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const fs = require('fs');
+
+// Read version from package.json once
+const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+const version = packageJson.version;
 
 module.exports = {
   entry: {
@@ -44,8 +49,26 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: 'src/manifest.json', to: 'manifest.json' },
-        { from: 'src/options/options.html', to: 'options.html' },
+        {
+          from: 'src/manifest.json',
+          to: 'manifest.json',
+          transform: (content) => {
+            const manifest = JSON.parse(content);
+
+            // Update version in manifest
+            manifest.version = version;
+
+            return JSON.stringify(manifest, null, 2);
+          }
+        },
+        {
+          from: 'src/options/options.html',
+          to: 'options.html',
+          transform: (content) => {
+            // Replace version placeholder with actual version
+            return content.toString().replace('{{VERSION}}', version);
+          }
+        },
         { from: 'src/options/options.css', to: 'options.css' },
         { from: 'src/popup/popup.html', to: 'popup.html' },
         { from: 'src/popup/popup.css', to: 'popup.css' },

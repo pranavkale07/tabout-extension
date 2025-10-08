@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Tab out of brackets, quotes, etc in LeetCode's code editor",
   "scripts": {
+    "prebuild": "node scripts/update-readme-version.js",
     "build": "webpack --mode=production",
     "build:dev": "webpack --mode=development",
     "build:watch": "webpack --mode=development --watch",
@@ -10,7 +11,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:ci": "jest --ci --coverage --watchAll=false"
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "version": "node -e \"console.log(require('./package.json').version)\"",
+    "zip": "cd dist && zip -r ../releases/tabout-extension-$(npm run version --silent).zip * -x '*.map'"
   },
   "devDependencies": {
     "@babel/core": "^7.21.3",
