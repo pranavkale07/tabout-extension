@@ -18,7 +18,8 @@ describe('storage', () => {
       expect(settings).toEqual({
         enabled: true,
         siteEnabled: {
-          'leetcode.com': true
+          'leetcode.com': true,
+          'leetcode.cn': true
         },
         customPairs: {},
         debugMode: false
@@ -38,7 +39,11 @@ describe('storage', () => {
       const settings = await StorageManager.getSettings();
       
       expect(settings).toEqual({
-        ...storedData,
+        enabled: false,
+        siteEnabled: {
+          'leetcode.com': false,
+          'leetcode.cn': true
+        },
         customPairs: {},
         debugMode: false
       });
@@ -52,7 +57,8 @@ describe('storage', () => {
       expect(settings).toEqual({
         enabled: true,
         siteEnabled: {
-          'leetcode.com': true
+          'leetcode.com': true,
+          'leetcode.cn': true
         },
         customPairs: {},
         debugMode: false
@@ -101,6 +107,16 @@ describe('storage', () => {
       });
 
       const enabled = await StorageManager.isEnabledForSite('leetcode.com');
+      expect(enabled).toBe(true);
+    });
+
+    test('should return true for leetcode.cn when default settings are applied', async () => {
+      chrome.storage.sync.get.mockResolvedValue({ 
+        enabled: true,
+        siteEnabled: { 'leetcode.com': true } // Missing leetcode.cn to ensure defaults are merged
+      });
+
+      const enabled = await StorageManager.isEnabledForSite('leetcode.cn');
       expect(enabled).toBe(true);
     });
 
@@ -164,7 +180,8 @@ describe('storage', () => {
       expect(settings).toEqual({
         enabled: true, // Default value for invalid boolean
         siteEnabled: {
-          'leetcode.com': true // Default value for invalid object
+          'leetcode.com': true, // Default value for invalid object
+          'leetcode.cn': true
         },
         customPairs: {}, // Default value for invalid object
         debugMode: false // Default value for invalid boolean
@@ -176,6 +193,7 @@ describe('storage', () => {
         enabled: false,
         siteEnabled: {
           'leetcode.com': false,
+          'leetcode.cn': true,
           'example.com': true
         },
         customPairs: { 'python': [['(', ')']] },
@@ -206,7 +224,8 @@ describe('storage', () => {
       expect(settings).toEqual({
         enabled: false, // Preserved valid value
         siteEnabled: {
-          'leetcode.com': true // Default for invalid object
+          'leetcode.com': true, // Default for invalid object
+          'leetcode.cn': true
         },
         customPairs: { 'python': [['(', ')']] }, // Preserved valid value
         debugMode: false // Default for invalid boolean
@@ -234,7 +253,7 @@ describe('storage', () => {
       // Should only preserve valid customPairs entries
       expect(settings).toEqual({
         enabled: true,
-        siteEnabled: { 'leetcode.com': true },
+        siteEnabled: { 'leetcode.com': true, 'leetcode.cn': true },
         customPairs: {
           'python': [['(', ')']], // Preserved valid entry
           'typescript': [['{', '}']] // Preserved valid entry

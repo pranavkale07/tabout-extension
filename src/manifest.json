@@ -18,15 +18,23 @@
     "default_title": "TabOut for LeetCode"
   },
   "host_permissions": [
+    "https://leetcode.cn/*",
+    "https://*.leetcode.cn/*",
     "https://leetcode.com/*",
     "https://*.leetcode.com/*"
   ],
   "content_scripts": [
     {
       "matches": [
+        "https://leetcode.cn/problems/*",
+        "https://leetcode.cn/contest/*",
+        "https://leetcode.cn/playground/*",
         "https://leetcode.com/problems/*",
         "https://leetcode.com/contest/*",
         "https://leetcode.com/playground/*",
+        "https://*.leetcode.cn/problems/*",
+        "https://*.leetcode.cn/contest/*",
+        "https://*.leetcode.cn/playground/*",
         "https://*.leetcode.com/problems/*",
         "https://*.leetcode.com/contest/*",
         "https://*.leetcode.com/playground/*"
@@ -44,6 +52,8 @@
     {
       "resources": ["page-script.js"],
       "matches": [
+        "https://leetcode.cn/*",
+        "https://*.leetcode.cn/*",
         "https://leetcode.com/*",
         "https://*.leetcode.com/*"
       ]

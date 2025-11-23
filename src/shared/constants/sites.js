@@ -11,19 +11,22 @@
  * Currently supports: LeetCode
  * Architecture allows easy addition of new sites in the future
  */
-export const SITE_CONFIGS = {
-  'leetcode.com': {
-    editor: 'monaco',
-    selectors: ['.monaco-editor'],
-    waitStrategy: 'mutation-observer',
-    editorApi: {
-      namespace: 'monaco',
-      getEditors: () => window.monaco?.editor?.getEditors?.() || [],
-      keyCode: {
-        Tab: 3  // monaco.KeyCode.Tab
-      }
+const LEETCODE_CONFIG = {
+  editor: 'monaco',
+  selectors: ['.monaco-editor'],
+  waitStrategy: 'mutation-observer',
+  editorApi: {
+    namespace: 'monaco',
+    getEditors: () => window.monaco?.editor?.getEditors?.() || [],
+    keyCode: {
+      Tab: 3  // monaco.KeyCode.Tab
     }
   }
+};
+
+export const SITE_CONFIGS = {
+  'leetcode.com': LEETCODE_CONFIG,
+  'leetcode.cn': LEETCODE_CONFIG
   // Future sites can be added here:
   // 'geeksforgeeks.org': { ... },
   // 'takeuforward.org': { ... }

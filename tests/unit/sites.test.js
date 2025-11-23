@@ -28,6 +28,23 @@ describe('sites', () => {
       expect(config.selectors).toEqual(['.monaco-editor']);
     });
 
+    test('should return leetcode config for leetcode.cn', () => {
+      const config = getSiteConfig('leetcode.cn');
+      
+      expect(config).toBeDefined();
+      expect(config.editor).toBe('monaco');
+      expect(config.selectors).toEqual(['.monaco-editor']);
+      expect(config.waitStrategy).toBe('mutation-observer');
+    });
+
+    test('should return leetcode config for www.leetcode.cn', () => {
+      const config = getSiteConfig('www.leetcode.cn');
+      
+      expect(config).toBeDefined();
+      expect(config.editor).toBe('monaco');
+      expect(config.selectors).toEqual(['.monaco-editor']);
+    });
+
     test('should return null for unsupported domain', () => {
       const config = getSiteConfig('example.com');
       
@@ -75,6 +92,14 @@ describe('sites', () => {
       expect(isSupportedSite('contest.leetcode.com')).toBe(true);
     });
 
+    test('should return true for leetcode.cn', () => {
+      expect(isSupportedSite('leetcode.cn')).toBe(true);
+    });
+
+    test('should return true for www.leetcode.cn', () => {
+      expect(isSupportedSite('www.leetcode.cn')).toBe(true);
+    });
+
     test('should return false for example.com', () => {
       expect(isSupportedSite('example.com')).toBe(false);
     });
@@ -95,6 +120,8 @@ describe('sites', () => {
     test('should handle case sensitivity', () => {
       expect(isSupportedSite('LEETCODE.COM')).toBe(true);
       expect(isSupportedSite('LeetCode.Com')).toBe(true);
+      expect(isSupportedSite('LEETCODE.CN')).toBe(true);
+      expect(isSupportedSite('LeetCode.Cn')).toBe(true);
     });
 
     test('should handle malformed hostnames', () => {
@@ -121,6 +148,8 @@ describe('sites', () => {
       expect(isSupportedSite('a.leetcode.com')).toBe(true);
       expect(isSupportedSite('a.b.leetcode.com')).toBe(true);
       expect(isSupportedSite('a.b.c.leetcode.com')).toBe(true);
+      expect(isSupportedSite('a.leetcode.cn')).toBe(true);
+      expect(isSupportedSite('a.b.leetcode.cn')).toBe(true);
     });
 
     test('should handle edge cases with dots', () => {
