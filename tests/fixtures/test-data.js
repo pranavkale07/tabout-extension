@@ -56,7 +56,8 @@ export const STORAGE_TEST_CASES = [
     expected: {
       enabled: true,
       siteEnabled: {
-        'leetcode.com': true
+        'leetcode.com': true,
+        'leetcode.cn': true
       },
       customPairs: {},
       debugMode: false
@@ -73,7 +74,8 @@ export const STORAGE_TEST_CASES = [
     expected: {
       enabled: false,
       siteEnabled: {
-        'leetcode.com': false
+        'leetcode.com': false,
+        'leetcode.cn': true
       },
       customPairs: {},
       debugMode: false
@@ -91,6 +93,16 @@ export const SITES_TEST_CASES = [
   {
     description: 'Subdomain match',
     hostname: 'www.leetcode.com',
+    expected: true
+  },
+  {
+    description: 'CN domain match',
+    hostname: 'leetcode.cn',
+    expected: true
+  },
+  {
+    description: 'CN subdomain match',
+    hostname: 'www.leetcode.cn',
     expected: true
   },
   {

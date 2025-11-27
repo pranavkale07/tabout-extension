@@ -144,7 +144,8 @@ class PopupController {
    */
   formatSiteName(hostname) {
     const nameMap = {
-      'leetcode.com': 'LeetCode'
+      'leetcode.com': 'LeetCode',
+      'leetcode.cn': 'LeetCode (CN)'
       // Future sites can be added here automatically
     };
     

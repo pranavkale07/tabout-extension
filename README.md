@@ -43,7 +43,7 @@
 - **Minimal storage** - only user preferences saved locally via Chrome sync
 
 ### Required Permissions
-- **Host (leetcode.com)**: Run only on LeetCode pages to access the editor context
+- **Host (leetcode.com, leetcode.cn)**: Run only on LeetCode pages to access the editor context
 - **Scripting**: Inject a small page script to access Monaco APIs
 - **Storage**: Save minimal preferences (enable/disable, debug) in Chrome sync
 - **ActiveTab**: Read the active tab's hostname in the popup to display site status (privacy-focused alternative to broad tabs permission)

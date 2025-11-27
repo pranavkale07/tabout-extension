@@ -37,6 +37,7 @@ export const DEFAULT_SETTINGS = {
  */
 function validateSettings(data) {
   const validated = { ...DEFAULT_SETTINGS };
+  const validatedSiteEnabled = generateDefaultSiteSettings(); // Ensure new supported domains stay enabled by default
   
   // Validate enabled (must be boolean)
   if (typeof data.enabled === 'boolean') {
@@ -45,13 +46,13 @@ function validateSettings(data) {
   
   // Validate siteEnabled (must be object with boolean values)
   if (data.siteEnabled && typeof data.siteEnabled === 'object' && !Array.isArray(data.siteEnabled)) {
-    validated.siteEnabled = {};
     for (const [domain, enabled] of Object.entries(data.siteEnabled)) {
       if (typeof domain === 'string' && typeof enabled === 'boolean') {
-        validated.siteEnabled[domain] = enabled;
+        validatedSiteEnabled[domain] = enabled;
       }
     }
   }
+  validated.siteEnabled = validatedSiteEnabled;
   
   // Validate customPairs (must be object with string keys and array values)
   if (data.customPairs && typeof data.customPairs === 'object' && !Array.isArray(data.customPairs)) {
