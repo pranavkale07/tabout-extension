@@ -1,6 +1,6 @@
 {
   "name": "Tabout for LeetCode",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Tab out of brackets, quotes, etc in LeetCode's code editor",
   "scripts": {
     "prebuild": "node scripts/update-readme-version.js",

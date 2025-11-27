@@ -43,6 +43,7 @@ describe('sites', () => {
       expect(config).toBeDefined();
       expect(config.editor).toBe('monaco');
       expect(config.selectors).toEqual(['.monaco-editor']);
+      expect(config.waitStrategy).toBe('mutation-observer');
     });
 
     test('should return null for unsupported domain', () => {
