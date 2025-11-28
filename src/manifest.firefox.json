@@ -1,0 +1,72 @@
+{
+    "manifest_version": 3,
+    "name": "TabOut for LeetCode",
+    "version": "{{VERSION}}",
+    "description": "Tab out of brackets, quotes, etc in LeetCode's code editor",
+    "permissions": [
+        "storage",
+        "scripting",
+        "activeTab"
+    ],
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "tabout-for-leetcode@pranavkale07",
+            "strict_min_version": "109.0"
+        }
+    },
+    "icons": {
+        "16": "assets/icons/icon-16.png",
+        "48": "assets/icons/icon-48.png",
+        "128": "assets/icons/icon-128.png"
+    },
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "TabOut for LeetCode"
+    },
+    "host_permissions": [
+        "https://leetcode.cn/*",
+        "https://*.leetcode.cn/*",
+        "https://leetcode.com/*",
+        "https://*.leetcode.com/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://leetcode.cn/problems/*",
+                "https://leetcode.cn/contest/*",
+                "https://leetcode.cn/playground/*",
+                "https://leetcode.com/problems/*",
+                "https://leetcode.com/contest/*",
+                "https://leetcode.com/playground/*",
+                "https://*.leetcode.cn/problems/*",
+                "https://*.leetcode.cn/contest/*",
+                "https://*.leetcode.cn/playground/*",
+                "https://*.leetcode.com/problems/*",
+                "https://*.leetcode.com/contest/*",
+                "https://*.leetcode.com/playground/*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "run_at": "document_idle",
+            "all_frames": false
+        }
+    ],
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": true
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "page-script.js"
+            ],
+            "matches": [
+                "https://leetcode.cn/*",
+                "https://*.leetcode.cn/*",
+                "https://leetcode.com/*",
+                "https://*.leetcode.com/*"
+            ]
+        }
+    ]
+}

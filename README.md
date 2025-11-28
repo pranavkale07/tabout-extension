@@ -25,6 +25,12 @@
 ### Chrome Web Store (Recommended)
 [![Install from Chrome Web Store](https://img.shields.io/badge/Install-Chrome%20Web%20Store-4285F4?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/tabout-for-leetcode/eecmlpblnpechggegghledjledbkebfp)
 
+### Firefox (Manual)
+1. Clone this repository
+2. Run `npm install && npm run build:firefox`
+3. Open `about:debugging` -> "This Firefox"
+4. Click "Load Temporary Add-on" -> select `dist/manifest.json`
+
 ### Manual Installation
 1. Clone this repository
 2. Run `npm install && npm run build`
@@ -55,7 +61,6 @@ We welcome contributions! To report bugs, fix issues, or add features, visit the
 
 ## Future Enhancements
 
-- **Firefox Support**: MV3 compatibility for Firefox 109+
 - **More Platforms**: Support for other coding platforms (GeeksForGeeks, takeuforward, HackerRank, CodeChef, etc.)
 - **Custom Delimiters**: User-defined tab-out patterns
 - **Keyboard Shortcuts**: Customizable key bindings

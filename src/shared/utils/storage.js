@@ -38,12 +38,12 @@ export const DEFAULT_SETTINGS = {
 function validateSettings(data) {
   const validated = { ...DEFAULT_SETTINGS };
   const validatedSiteEnabled = generateDefaultSiteSettings(); // Ensure new supported domains stay enabled by default
-  
+
   // Validate enabled (must be boolean)
   if (typeof data.enabled === 'boolean') {
     validated.enabled = data.enabled;
   }
-  
+
   // Validate siteEnabled (must be object with boolean values)
   if (data.siteEnabled && typeof data.siteEnabled === 'object' && !Array.isArray(data.siteEnabled)) {
     for (const [domain, enabled] of Object.entries(data.siteEnabled)) {
@@ -53,7 +53,7 @@ function validateSettings(data) {
     }
   }
   validated.siteEnabled = validatedSiteEnabled;
-  
+
   // Validate customPairs (must be object with string keys and array values)
   if (data.customPairs && typeof data.customPairs === 'object' && !Array.isArray(data.customPairs)) {
     validated.customPairs = {};
@@ -64,12 +64,12 @@ function validateSettings(data) {
       }
     }
   }
-  
+
   // Validate debugMode (must be boolean)
   if (typeof data.debugMode === 'boolean') {
     validated.debugMode = data.debugMode;
   }
-  
+
   return validated;
 }
 
@@ -79,8 +79,8 @@ function validateSettings(data) {
 export class StorageManager {
   static isExtensionContextValid() {
     try {
-      // chrome and chrome.runtime.id are undefined when the extension is reloading/unloaded
-      return typeof chrome !== 'undefined' && chrome?.runtime?.id;
+      // browser and browser.runtime.id are undefined when the extension is reloading/unloaded
+      return typeof browser !== 'undefined' && browser?.runtime?.id;
     } catch (_) {
       return false;
     }
@@ -93,17 +93,17 @@ export class StorageManager {
   static async getSettings() {
     try {
       if (!this.isExtensionContextValid()) {
-        // Avoid calling chrome APIs when context is invalid (e.g., during reload)
+        // Avoid calling browser APIs when context is invalid (e.g., during reload)
         return DEFAULT_SETTINGS;
       }
-      const stored = await chrome.storage.sync.get(DEFAULT_SETTINGS);
+      const stored = await browser.storage.sync.get(DEFAULT_SETTINGS);
       return validateSettings(stored);
     } catch (error) {
       console.error('[Tabout] Failed to get settings:', error);
       return DEFAULT_SETTINGS;
     }
   }
-  
+
   /**
    * Update a specific setting
    * @param {string} key - Setting key
@@ -115,12 +115,12 @@ export class StorageManager {
       if (!this.isExtensionContextValid()) {
         return; // Silently ignore updates during invalid context
       }
-      await chrome.storage.sync.set({ [key]: value });
+      await browser.storage.sync.set({ [key]: value });
     } catch (error) {
       console.error('[Tabout] Failed to update setting:', error);
     }
   }
-  
+
   /**
    * Update multiple settings at once
    * @param {Object} updates - Settings to update
@@ -131,12 +131,12 @@ export class StorageManager {
       if (!this.isExtensionContextValid()) {
         return; // Silently ignore updates during invalid context
       }
-      await chrome.storage.sync.set(updates);
+      await browser.storage.sync.set(updates);
     } catch (error) {
       console.error('[Tabout] Failed to update settings:', error);
     }
   }
-  
+
   /**
    * Check if tabout is enabled for a specific site
    * @param {string} hostname - Site hostname
@@ -146,21 +146,21 @@ export class StorageManager {
     try {
       const settings = await this.getSettings();
       if (!settings.enabled) return false;
-      
+
       // Check site-specific setting with secure domain matching
       for (const domain of Object.keys(settings.siteEnabled)) {
         if (hostname === domain || hostname.endsWith('.' + domain)) {
           return settings.siteEnabled[domain];
         }
       }
-      
+
       return false; // Unknown site, disabled by default
     } catch (error) {
       console.error('[Tabout] Failed to check site enabled:', error);
       return false;
     }
   }
-  
+
   /**
    * Listen for storage changes
    * @param {function} callback - Called when settings change
@@ -168,7 +168,7 @@ export class StorageManager {
    */
   static onSettingsChanged(callback) {
     if (!this.isExtensionContextValid()) {
-      return () => {};
+      return () => { };
     }
 
     const listener = (changes, area) => {
@@ -176,9 +176,9 @@ export class StorageManager {
       callback(changes);
     };
 
-    chrome.storage.onChanged.addListener(listener);
+    browser.storage.onChanged.addListener(listener);
 
     // Return cleanup function
-    return () => chrome.storage.onChanged.removeListener(listener);
+    return () => browser.storage.onChanged.removeListener(listener);
   }
 }
