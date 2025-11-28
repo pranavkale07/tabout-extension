@@ -1,11 +1,12 @@
 {
   "name": "Tabout for LeetCode",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Tab out of brackets, quotes, etc in LeetCode's code editor",
   "scripts": {
     "prebuild": "node scripts/update-readme-version.js",
     "build": "webpack --mode=production",
     "build:firefox": "TARGET_BROWSER=firefox webpack --mode=production",
+    "build:all": "npm run clean && mkdir -p dist/chrome dist/firefox && npm run build && npm run build:firefox",
     "build:dev": "webpack --mode=development",
     "build:firefox:dev": "TARGET_BROWSER=firefox webpack --mode=development",
     "build:watch": "webpack --mode=development --watch",
@@ -15,7 +16,9 @@
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --watchAll=false",
     "version": "node -e \"console.log(require('./package.json').version)\"",
-    "zip": "cd dist && zip -r ../releases/tabout-extension-$(npm run version --silent).zip * -x '*.map'"
+    "zip": "cd dist/chrome && zip -r ../../releases/tabout-extension-$(npm run version --silent)-chrome.zip * -x '*.map' && cd ../firefox && zip -r ../../releases/tabout-extension-$(npm run version --silent)-firefox.zip * -x '*.map'",
+    "zip:chrome": "cd dist/chrome && zip -r ../../releases/tabout-extension-$(npm run version --silent)-chrome.zip * -x '*.map'",
+    "zip:firefox": "cd dist/firefox && zip -r ../../releases/tabout-extension-$(npm run version --silent)-firefox.zip * -x '*.map'"
   },
   "devDependencies": {
     "@babel/core": "^7.21.3",

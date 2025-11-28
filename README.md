@@ -2,7 +2,7 @@
 
 ![TabOut for LeetCode](src/assets/logos/tabout-icon-128_crp.png)
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-v0.1.2-green)](https://chromewebstore.google.com/detail/tabout-for-leetcode/eecmlpblnpechggegghledjledbkebfp)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-v0.2.0-green)](https://chromewebstore.google.com/detail/tabout-for-leetcode/eecmlpblnpechggegghledjledbkebfp)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/mv3/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -29,13 +29,13 @@
 1. Clone this repository
 2. Run `npm install && npm run build:firefox`
 3. Open `about:debugging` -> "This Firefox"
-4. Click "Load Temporary Add-on" -> select `dist/manifest.json`
+4. Click "Load Temporary Add-on" -> select `dist/firefox/manifest.json`
 
-### Manual Installation
+### Manual Installation (Chrome/Chromium)
 1. Clone this repository
 2. Run `npm install && npm run build`
 3. Open `chrome://extensions` → enable Developer mode
-4. Click "Load unpacked" → select the `dist/` folder
+4. Click "Load unpacked" → select the `dist/chrome/` folder
 
 ### Controls
 - **Popup**: Click the extension icon to quickly enable/disable
@@ -46,12 +46,12 @@
 ### Data Collection
 - **No personal data** or problem content is collected or transmitted
 - **Local processing only** - all tab-out logic runs in your browser
-- **Minimal storage** - only user preferences saved locally via Chrome sync
+- **Minimal storage** - only user preferences saved locally via browser storage
 
 ### Required Permissions
 - **Host (leetcode.com, leetcode.cn)**: Run only on LeetCode pages to access the editor context
 - **Scripting**: Inject a small page script to access Monaco APIs
-- **Storage**: Save minimal preferences (enable/disable, debug) in Chrome sync
+- **Storage**: Save minimal preferences (enable/disable, debug) in browser storage
 - **ActiveTab**: Read the active tab's hostname in the popup to display site status (privacy-focused alternative to broad tabs permission)
 
 ## Contributing

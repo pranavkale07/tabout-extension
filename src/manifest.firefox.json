@@ -10,8 +10,11 @@
     ],
     "browser_specific_settings": {
         "gecko": {
-            "id": "tabout-for-leetcode@pranavkale07",
-            "strict_min_version": "109.0"
+            "id": "tabout@prxnav.dev",
+            "strict_min_version": "109.0",
+            "data_collection_permissions": {
+                "required": ["none"]
+            }
         }
     },
     "icons": {

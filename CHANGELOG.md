@@ -5,10 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2025-11-29
+
+### Added
+- Firefox support and cross-browser compatibility
+  - Added official Firefox support for Firefox 109+ (Manifest V3)
+  - Integrated `webextension-polyfill` for cross-browser API compatibility
+  - Replaced all Chrome-specific APIs with WebExtension standard `browser.*` APIs
+  - Added Firefox-specific manifest with Gecko ID
+  - Added Firefox build scripts (`build:firefox`, `build:firefox:dev`)
+  - Added `build:all` script to build both Chrome and Firefox versions simultaneously
+
+### Changed
+- Updated all tests to use cross-browser `browser` API mocks
+- Build system now outputs to separate folders for consistency:
+  - Chrome builds → `dist/chrome/`
+  - Firefox builds → `dist/firefox/`
+  - Both builds can coexist without overwriting each other
+- Updated zip command to create separate archives for each browser (`tabout-extension-{version}-chrome.zip` and `tabout-extension-{version}-firefox.zip`)
+
 ## [0.1.2] - 2025-11-27
 
 ### Added
-- Support for LeetCode.cn (China) endpoint
+- Support for leetcode.cn (China) endpoint
   - Added leetcode.cn to site configurations
   - Updated manifest permissions and content script matches
   - Updated storage logic to auto-enable new sites by default

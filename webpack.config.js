@@ -15,9 +15,9 @@ module.exports = {
     'page-script': './src/content/page-script.js'
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, process.env.TARGET_BROWSER === 'firefox' ? 'dist/firefox' : 'dist/chrome'),
     filename: '[name].js',
-    clean: true
+    clean: false // Never auto-clean to avoid deleting other browser's build
   },
   devtool: process.env.NODE_ENV === 'production' ? false : 'source-map',
   resolve: {
