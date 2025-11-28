@@ -2,6 +2,7 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const fs = require('fs');
+const webpack = require('webpack');
 
 // Read version from package.json once
 const { version } = require('./package.json');
@@ -49,7 +50,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {
-          from: 'src/manifest.json',
+          from: process.env.TARGET_BROWSER === 'firefox' ? 'src/manifest.firefox.json' : 'src/manifest.json',
           to: 'manifest.json',
           transform: (content) => {
             const manifest = JSON.parse(content);
@@ -73,7 +74,10 @@ module.exports = {
         { from: 'src/popup/popup.css', to: 'popup.css' },
         { from: 'src/assets', to: 'assets', noErrorOnMissing: true }
       ]
-    })
+    }),
+    new webpack.ProvidePlugin({
+      browser: 'webextension-polyfill',
+    }),
   ],
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development'
 };

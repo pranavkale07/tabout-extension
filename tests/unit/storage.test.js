@@ -11,7 +11,7 @@ describe('storage', () => {
 
   describe('getSettings', () => {
     test('should return default settings when no data exists', async () => {
-      chrome.storage.sync.get.mockResolvedValue({});
+      browser.storage.sync.get.mockResolvedValue({});
 
       const settings = await StorageManager.getSettings();
       
@@ -34,7 +34,7 @@ describe('storage', () => {
         }
       };
 
-      chrome.storage.sync.get.mockResolvedValue(storedData);
+      browser.storage.sync.get.mockResolvedValue(storedData);
 
       const settings = await StorageManager.getSettings();
       
@@ -50,7 +50,7 @@ describe('storage', () => {
     });
 
     test('should handle storage errors gracefully', async () => {
-      chrome.storage.sync.get.mockRejectedValue(new Error('Storage error'));
+      browser.storage.sync.get.mockRejectedValue(new Error('Storage error'));
 
       const settings = await StorageManager.getSettings();
       
@@ -75,11 +75,11 @@ describe('storage', () => {
         }
       };
 
-      chrome.storage.sync.set.mockResolvedValue();
+      browser.storage.sync.set.mockResolvedValue();
 
       await StorageManager.updateSettings(settings);
       
-      expect(chrome.storage.sync.set).toHaveBeenCalledWith(settings);
+      expect(browser.storage.sync.set).toHaveBeenCalledWith(settings);
     });
 
     test('should handle storage errors during save', async () => {
@@ -90,18 +90,18 @@ describe('storage', () => {
         }
       };
 
-      chrome.storage.sync.set.mockRejectedValue(new Error('Storage error'));
+      browser.storage.sync.set.mockRejectedValue(new Error('Storage error'));
 
       // The actual implementation doesn't throw errors, it just logs them
       await StorageManager.updateSettings(settings);
       
-      expect(chrome.storage.sync.set).toHaveBeenCalledWith(settings);
+      expect(browser.storage.sync.set).toHaveBeenCalledWith(settings);
     });
   });
 
   describe('isEnabledForSite', () => {
     test('should return true when globally enabled and site enabled', async () => {
-      chrome.storage.sync.get.mockResolvedValue({ 
+      browser.storage.sync.get.mockResolvedValue({ 
         enabled: true,
         siteEnabled: { 'leetcode.com': true }
       });
@@ -111,7 +111,7 @@ describe('storage', () => {
     });
 
     test('should return true for leetcode.cn when default settings are applied', async () => {
-      chrome.storage.sync.get.mockResolvedValue({ 
+      browser.storage.sync.get.mockResolvedValue({ 
         enabled: true,
         siteEnabled: { 'leetcode.com': true } // Missing leetcode.cn to ensure defaults are merged
       });
@@ -121,7 +121,7 @@ describe('storage', () => {
     });
 
     test('should return false when globally disabled', async () => {
-      chrome.storage.sync.get.mockResolvedValue({ 
+      browser.storage.sync.get.mockResolvedValue({ 
         enabled: false,
         siteEnabled: { 'leetcode.com': true }
       });
@@ -131,7 +131,7 @@ describe('storage', () => {
     });
 
     test('should return false when site is disabled', async () => {
-      chrome.storage.sync.get.mockResolvedValue({ 
+      browser.storage.sync.get.mockResolvedValue({ 
         enabled: true,
         siteEnabled: { 'leetcode.com': false }
       });
@@ -141,7 +141,7 @@ describe('storage', () => {
     });
 
     test('should return false for unknown site', async () => {
-      chrome.storage.sync.get.mockResolvedValue({ 
+      browser.storage.sync.get.mockResolvedValue({ 
         enabled: true,
         siteEnabled: { 'leetcode.com': true }
       });
@@ -153,11 +153,11 @@ describe('storage', () => {
 
   describe('updateSetting', () => {
     test('should update a single setting', async () => {
-      chrome.storage.sync.set.mockResolvedValue();
+      browser.storage.sync.set.mockResolvedValue();
 
       await StorageManager.updateSetting('enabled', false);
       
-      expect(chrome.storage.sync.set).toHaveBeenCalledWith(
+      expect(browser.storage.sync.set).toHaveBeenCalledWith(
         { enabled: false }
       );
     });
@@ -172,7 +172,7 @@ describe('storage', () => {
         debugMode: 'not a boolean'
       };
 
-      chrome.storage.sync.get.mockResolvedValue(invalidSettings);
+      browser.storage.sync.get.mockResolvedValue(invalidSettings);
 
       const settings = await StorageManager.getSettings();
       
@@ -200,7 +200,7 @@ describe('storage', () => {
         debugMode: true
       };
 
-      chrome.storage.sync.get.mockResolvedValue(validSettings);
+      browser.storage.sync.get.mockResolvedValue(validSettings);
 
       const settings = await StorageManager.getSettings();
       
@@ -216,7 +216,7 @@ describe('storage', () => {
         debugMode: 'not a boolean' // Invalid
       };
 
-      chrome.storage.sync.get.mockResolvedValue(mixedSettings);
+      browser.storage.sync.get.mockResolvedValue(mixedSettings);
 
       const settings = await StorageManager.getSettings();
       
@@ -246,7 +246,7 @@ describe('storage', () => {
         debugMode: false
       };
 
-      chrome.storage.sync.get.mockResolvedValue(settingsWithInvalidCustomPairs);
+      browser.storage.sync.get.mockResolvedValue(settingsWithInvalidCustomPairs);
 
       const settings = await StorageManager.getSettings();
       

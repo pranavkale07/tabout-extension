@@ -9,7 +9,7 @@ class PopupController {
     this.currentTab = null;
     this.elements = {};
   }
-  
+
   /**
    * Initialize the popup
    */
@@ -20,7 +20,7 @@ class PopupController {
     await this.loadCurrentState();
     await this.updateUI();
   }
-  
+
   /**
    * Bind DOM elements
    */
@@ -39,7 +39,7 @@ class PopupController {
       mainToggle: document.getElementById('mainToggle')
     };
   }
-  
+
   /**
    * Bind event listeners
    */
@@ -48,18 +48,18 @@ class PopupController {
     this.elements.globalEnabled.addEventListener('change', () => {
       this.handleGlobalToggle();
     });
-    
+
     // Site-specific toggle
     this.elements.siteEnabled.addEventListener('change', () => {
       this.handleSiteToggle();
     });
-    
+
     // Open full options
     this.elements.openOptions.addEventListener('click', () => {
-      chrome.runtime.openOptionsPage();
+      browser.runtime.openOptionsPage();
       window.close();
     });
-    
+
     // Main toggle click area
     this.elements.mainToggle.addEventListener('click', (e) => {
       if (e.target === this.elements.mainToggle) {
@@ -67,19 +67,19 @@ class PopupController {
       }
     });
   }
-  
+
   /**
    * Get current active tab
    */
   async getCurrentTab() {
     try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
       this.currentTab = tab;
     } catch (error) {
       console.error('Failed to get current tab:', error);
     }
   }
-  
+
   /**
    * Load current extension state
    */
@@ -91,7 +91,7 @@ class PopupController {
       this.settings = { enabled: false, siteEnabled: {} };
     }
   }
-  
+
   /**
    * Update UI based on current state
    */
@@ -100,30 +100,30 @@ class PopupController {
       this.showError('Unable to detect current tab');
       return;
     }
-    
+
     const hostname = new URL(this.currentTab.url).hostname;
     const siteConfig = getSiteConfig(hostname);
     const isSupported = isSupportedSite(hostname);
-    
+
     // Update site display
     this.elements.currentSite.textContent = hostname;
-    
+
     // Update global toggle
     this.elements.globalEnabled.checked = this.settings.enabled;
-    
+
     // Update site status
     if (isSupported) {
       this.elements.siteStatusIcon.className = 'status-icon active';
       this.elements.siteStatusText.textContent = this.formatSiteName(hostname);
-      
+
       // Hide site-specific toggle since we only support LeetCode for now
       // TODO: Re-enable when adding more sites
       this.elements.siteToggle.style.display = 'none';
-      
+
       // Still track the setting internally for future use
       const siteEnabled = await this.getSiteEnabledStatus(hostname);
       this.elements.siteEnabled.checked = siteEnabled;
-      
+
       // Update editor status based on site config (more reliable than detection)
       if (siteConfig) {
         this.updateEditorStatus(siteConfig.editor, true); // Pass true to indicate it's active
@@ -136,7 +136,7 @@ class PopupController {
       this.updateEditorStatus('Unknown', false);
     }
   }
-  
+
   /**
    * Format domain name for display
    * @param {string} hostname - Hostname to format
@@ -148,14 +148,14 @@ class PopupController {
       'leetcode.cn': 'LeetCode (CN)'
       // Future sites can be added here automatically
     };
-    
+
     // Find matching domain (handle subdomains)
     for (const [domain, displayName] of Object.entries(nameMap)) {
       if (hostname === domain || hostname.endsWith('.' + domain)) {
         return displayName;
       }
     }
-    
+
     // Fallback: capitalize first letter
     return hostname.charAt(0).toUpperCase() + hostname.slice(1).replace('.com', '');
   }
@@ -165,17 +165,17 @@ class PopupController {
    */
   async getSiteEnabledStatus(hostname) {
     const siteEnabled = this.settings.siteEnabled || {};
-    
+
     // Check for exact match or domain match with secure matching
     for (const domain of Object.keys(siteEnabled)) {
       if (hostname === domain || hostname.endsWith('.' + domain)) {
         return siteEnabled[domain];
       }
     }
-    
+
     return true; // Default enabled for supported sites
   }
-  
+
   /**
    * Update editor status display
    */
@@ -184,7 +184,7 @@ class PopupController {
     this.elements.editorStatusText.textContent = isActive ? `${displayName} (Active)` : displayName;
     this.elements.editorStatusIcon.className = isActive ? 'status-icon active' : 'status-icon unknown';
   }
-  
+
   /**
    * Format editor type for display
    */
@@ -195,21 +195,21 @@ class PopupController {
     };
     return nameMap[editorType?.toLowerCase()] || editorType || 'Unknown';
   }
-  
+
   /**
    * Check if editor is present on current page
    * (Optional verification - doesn't override the status set by updateEditorStatus)
    */
   async checkEditorPresence() {
     if (!this.currentTab) return;
-    
+
     try {
       // Only perform verification, don't override the display
-      const results = await chrome.scripting.executeScript({
+      const results = await browser.scripting.executeScript({
         target: { tabId: this.currentTab.id },
         function: this.detectEditorOnPage
       });
-      
+
       if (results && results[0] && results[0].result) {
         const { detected } = results[0].result;
         if (!detected) {
@@ -224,14 +224,14 @@ class PopupController {
       console.log('Could not check editor presence:', error.message);
     }
   }
-  
+
   /**
    * Function injected into page to detect editor
    * (This runs in the page context)
    */
   detectEditorOnPage() {
     // Simple detection - just check if any editor infrastructure is present
-    
+
     // Check for Monaco
     if (window.monaco && window.monaco.editor) {
       const editors = window.monaco.editor.getEditors();
@@ -239,20 +239,20 @@ class PopupController {
         return { detected: true };
       }
     }
-    
+
     // Check for CodeMirror
     if (document.querySelector('.CodeMirror') || document.querySelector('.cm-editor')) {
       return { detected: true };
     }
-    
+
     // Check for our extension marker  
     if (window.__TABOUT_EXTENSION_LOADED) {
       return { detected: true };
     }
-    
+
     return { detected: false };
   }
-  
+
   /**
    * Handle global toggle change
    */
@@ -260,10 +260,10 @@ class PopupController {
     try {
       const enabled = this.elements.globalEnabled.checked;
       await StorageManager.updateSetting('enabled', enabled);
-      
+
       // Update local state
       this.settings.enabled = enabled;
-      
+
       console.log('Global tabout:', enabled ? 'enabled' : 'disabled');
     } catch (error) {
       console.error('Failed to update global setting:', error);
@@ -271,17 +271,17 @@ class PopupController {
       this.elements.globalEnabled.checked = !this.elements.globalEnabled.checked;
     }
   }
-  
+
   /**
    * Handle site-specific toggle change
    */
   async handleSiteToggle() {
     if (!this.currentTab) return;
-    
+
     try {
       const hostname = new URL(this.currentTab.url).hostname;
       const enabled = this.elements.siteEnabled.checked;
-      
+
       // Find the domain key for this hostname with secure matching
       let domainKey = null;
       const supportedDomains = getSupportedDomains(); // Single source of truth
@@ -291,18 +291,18 @@ class PopupController {
           break;
         }
       }
-      
+
       if (domainKey) {
         const updatedSiteEnabled = {
           ...this.settings.siteEnabled,
           [domainKey]: enabled
         };
-        
+
         await StorageManager.updateSetting('siteEnabled', updatedSiteEnabled);
-        
+
         // Update local state
         this.settings.siteEnabled = updatedSiteEnabled;
-        
+
         console.log(`${domainKey} tabout:`, enabled ? 'enabled' : 'disabled');
       }
     } catch (error) {
@@ -311,7 +311,7 @@ class PopupController {
       this.elements.siteEnabled.checked = !this.elements.siteEnabled.checked;
     }
   }
-  
+
   /**
    * Show error state
    */

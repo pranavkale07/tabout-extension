@@ -1,19 +1,32 @@
-// Mock Chrome APIs
-global.chrome = {
+// Mock Browser APIs (cross-browser compatible)
+global.browser = {
   storage: {
     sync: {
       get: jest.fn(),
       set: jest.fn(),
       remove: jest.fn(),
       clear: jest.fn()
+    },
+    onChanged: {
+      addListener: jest.fn(),
+      removeListener: jest.fn()
     }
   },
   runtime: {
+    id: 'test-extension-id',
+    getURL: jest.fn((path) => `extension://test-extension-id/${path}`),
+    openOptionsPage: jest.fn(),
     sendMessage: jest.fn(),
     onMessage: {
       addListener: jest.fn(),
       removeListener: jest.fn()
     }
+  },
+  tabs: {
+    query: jest.fn()
+  },
+  scripting: {
+    executeScript: jest.fn()
   }
 };
 
