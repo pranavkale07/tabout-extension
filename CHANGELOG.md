@@ -5,14 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.0] - 2025-11-29
+## [0.2.0] - 2025-12-02
 
 ### Added
 - Firefox support and cross-browser compatibility
-  - Added official Firefox support for Firefox 109+ (Manifest V3)
+  - Added official Firefox support for Firefox 140+ (Manifest V3)
+  - Published on [Firefox Add-ons (AMO)](https://addons.mozilla.org/en-US/firefox/addon/tabout-extension/)
   - Integrated `webextension-polyfill` for cross-browser API compatibility
   - Replaced all Chrome-specific APIs with WebExtension standard `browser.*` APIs
-  - Added Firefox-specific manifest with Gecko ID
+  - Added Firefox-specific manifest with Gecko ID and data collection permissions
   - Added Firefox build scripts (`build:firefox`, `build:firefox:dev`)
   - Added `build:all` script to build both Chrome and Firefox versions simultaneously
 

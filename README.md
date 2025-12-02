@@ -3,6 +3,7 @@
 ![TabOut for LeetCode](src/assets/logos/tabout-icon-128_crp.png)
 
 [![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-v0.2.0-green)](https://chromewebstore.google.com/detail/tabout-for-leetcode/eecmlpblnpechggegghledjledbkebfp)
+[![Firefox Add-ons](https://img.shields.io/badge/Firefox%20Add--ons-v0.2.0-orange)](https://addons.mozilla.org/en-US/firefox/addon/tabout-extension/)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/mv3/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -25,13 +26,18 @@
 ### Chrome Web Store (Recommended)
 [![Install from Chrome Web Store](https://img.shields.io/badge/Install-Chrome%20Web%20Store-4285F4?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/tabout-for-leetcode/eecmlpblnpechggegghledjledbkebfp)
 
-### Firefox (Manual)
+### Firefox Add-ons (Recommended)
+[![Install from Firefox Add-ons](https://img.shields.io/badge/Install-Firefox%20Add--ons-FF7139?logo=firefoxbrowser&logoColor=white)](https://addons.mozilla.org/en-US/firefox/addon/tabout-extension/)
+
+### Manual Installation
+
+#### Firefox
 1. Clone this repository
 2. Run `npm install && npm run build:firefox`
 3. Open `about:debugging` -> "This Firefox"
 4. Click "Load Temporary Add-on" -> select `dist/firefox/manifest.json`
 
-### Manual Installation (Chrome/Chromium)
+#### Chrome/Chromium
 1. Clone this repository
 2. Run `npm install && npm run build`
 3. Open `chrome://extensions` → enable Developer mode
