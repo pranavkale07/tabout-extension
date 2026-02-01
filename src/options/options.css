@@ -283,4 +283,221 @@ input:checked + .slider:before {
   text-align: left;
 }
 
+/* Smart Jump Points Styles */
+.feature-new {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
 
+.new-badge {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.section-description {
+  color: #9ca3af;
+  margin: -8px 0 16px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.jump-markers-section {
+  margin-top: 20px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid #1f2937;
+}
+
+.jump-markers-section h3 {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  color: #f3f4f6;
+}
+
+.markers-description {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.markers-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.marker-chip {
+  padding: 6px 12px;
+  background: #1f2937;
+  border: 1.5px solid #374151;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.marker-chip:hover {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+.marker-chip.active {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.marker-chip.custom {
+  position: relative;
+  padding-right: 28px;
+}
+
+.marker-chip .remove-marker {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ef4444;
+  font-weight: bold;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.marker-chip.custom:hover .remove-marker {
+  opacity: 1;
+}
+
+.custom-marker-input {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.custom-marker-input input {
+  flex: 1;
+  padding: 8px 12px;
+  background: #1f2937;
+  border: 1.5px solid #374151;
+  border-radius: 6px;
+  color: #f3f4f6;
+  font-size: 13px;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.custom-marker-input input:focus {
+  border-color: #10b981;
+}
+
+.custom-marker-input input::placeholder {
+  color: #6b7280;
+}
+
+.add-btn {
+  padding: 8px 16px;
+  background: #10b981;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-btn:hover {
+  background: #059669;
+}
+
+.add-btn:active {
+  transform: scale(0.98);
+}
+
+.templates-section {
+  margin-top: 20px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid #1f2937;
+  position: relative;
+}
+
+.templates-section h3 {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  color: #f3f4f6;
+}
+
+.templates-description {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.template-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 10px;
+  background: #1f2937;
+  border: 1.5px solid #374151;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #f3f4f6;
+}
+
+.template-btn:hover {
+  background: #374151;
+  border-color: #10b981;
+  transform: translateY(-2px);
+}
+
+.template-btn:active {
+  transform: translateY(0);
+}
+
+.template-icon {
+  font-size: 24px;
+}
+
+.template-name {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.template-copied {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #10b981;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.template-copied.show {
+  opacity: 1;
+}

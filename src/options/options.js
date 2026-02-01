@@ -1,5 +1,6 @@
 import { StorageManager } from '../shared/utils/storage.js';
 import { getSupportedDomains, getSiteConfig } from '../shared/constants/sites.js';
+import { DEFAULT_JUMP_MARKERS, JUMP_TEMPLATES } from '../shared/constants/jump-points.js';
 
 /**
  * Options page controller
@@ -34,7 +35,15 @@ class OptionsPage {
       linkReport: document.getElementById('linkReport'),
       linkFeature: document.getElementById('linkFeature'),
       linkDonate: document.getElementById('linkDonate'),
-      linkRequestPlatform: document.getElementById('linkRequestPlatform')
+      linkRequestPlatform: document.getElementById('linkRequestPlatform'),
+      // Jump points elements
+      jumpPointsEnabled: document.getElementById('jumpPointsEnabled'),
+      jumpPointsWrap: document.getElementById('jumpPointsWrap'),
+      jumpPointsCaseSensitive: document.getElementById('jumpPointsCaseSensitive'),
+      markersGrid: document.getElementById('markersGrid'),
+      customMarkerInput: document.getElementById('customMarkerInput'),
+      addMarkerBtn: document.getElementById('addMarkerBtn'),
+      templateCopied: document.getElementById('templateCopied')
     };
   }
   
@@ -107,6 +116,15 @@ class OptionsPage {
       this.elements.globalEnabled.checked = settings.enabled;
       this.elements.debugMode.checked = settings.debugMode;
       
+      // Set jump points settings
+      const jumpPoints = settings.jumpPoints || {};
+      this.elements.jumpPointsEnabled.checked = jumpPoints.enabled !== false;
+      this.elements.jumpPointsWrap.checked = jumpPoints.wrapAround !== false;
+      this.elements.jumpPointsCaseSensitive.checked = jumpPoints.caseSensitive === true;
+      
+      // Load markers
+      this.loadMarkers(jumpPoints);
+      
       // Update header status pill
       if (this.elements.statusPill) {
         this.elements.statusPill.textContent = settings.enabled ? 'Enabled' : 'Disabled';
@@ -143,6 +161,35 @@ class OptionsPage {
     
     this.elements.debugMode.addEventListener('change', () => {
       this.saveSetting('debugMode', this.elements.debugMode.checked);
+    });
+    
+    // Jump points settings
+    this.elements.jumpPointsEnabled.addEventListener('change', () => {
+      this.saveJumpPointsSetting('enabled', this.elements.jumpPointsEnabled.checked);
+    });
+    
+    this.elements.jumpPointsWrap.addEventListener('change', () => {
+      this.saveJumpPointsSetting('wrapAround', this.elements.jumpPointsWrap.checked);
+    });
+    
+    this.elements.jumpPointsCaseSensitive.addEventListener('change', () => {
+      this.saveJumpPointsSetting('caseSensitive', this.elements.jumpPointsCaseSensitive.checked);
+    });
+    
+    // Custom marker input
+    this.elements.addMarkerBtn.addEventListener('click', () => this.addCustomMarker());
+    this.elements.customMarkerInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        this.addCustomMarker();
+      }
+    });
+    
+    // Template buttons
+    document.querySelectorAll('.template-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const template = btn.dataset.template;
+        this.copyTemplate(template);
+      });
     });
     
     // Dynamic site settings - single source of truth
@@ -233,6 +280,186 @@ class OptionsPage {
     this.statusTimeout = setTimeout(() => {
       statusEl.classList.remove('show');
     }, STATUS_DISPLAY_DURATION_MS);
+  }
+  
+  /**
+   * Load markers grid
+   * @param {Object} jumpPoints - Jump points settings
+   */
+  loadMarkers(jumpPoints) {
+    const activeMarkers = jumpPoints.activeMarkers || DEFAULT_JUMP_MARKERS;
+    const customMarkers = jumpPoints.customMarkers || [];
+    
+    const grid = this.elements.markersGrid;
+    grid.innerHTML = '';
+    
+    // Add default markers
+    DEFAULT_JUMP_MARKERS.forEach(marker => {
+      const chip = this.createMarkerChip(marker, activeMarkers.includes(marker), false);
+      grid.appendChild(chip);
+    });
+    
+    // Add custom markers
+    customMarkers.forEach(marker => {
+      const chip = this.createMarkerChip(marker, activeMarkers.includes(marker), true);
+      grid.appendChild(chip);
+    });
+  }
+  
+  /**
+   * Create a marker chip element
+   * @param {string} marker - Marker text
+   * @param {boolean} isActive - Whether marker is active
+   * @param {boolean} isCustom - Whether marker is custom
+   * @returns {HTMLElement} - Marker chip element
+   */
+  createMarkerChip(marker, isActive, isCustom) {
+    const chip = document.createElement('div');
+    chip.className = `marker-chip ${isActive ? 'active' : ''} ${isCustom ? 'custom' : ''}`;
+    chip.textContent = marker;
+    
+    if (isCustom) {
+      const removeBtn = document.createElement('span');
+      removeBtn.className = 'remove-marker';
+      removeBtn.textContent = '×';
+      removeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.removeCustomMarker(marker);
+      });
+      chip.appendChild(removeBtn);
+    }
+    
+    chip.addEventListener('click', () => this.toggleMarker(marker));
+    
+    return chip;
+  }
+  
+  /**
+   * Toggle a marker active/inactive
+   * @param {string} marker - Marker to toggle
+   */
+  async toggleMarker(marker) {
+    try {
+      const settings = await StorageManager.getSettings();
+      const jumpPoints = settings.jumpPoints || {};
+      let activeMarkers = jumpPoints.activeMarkers || DEFAULT_JUMP_MARKERS.slice();
+      
+      const index = activeMarkers.indexOf(marker);
+      if (index > -1) {
+        activeMarkers = activeMarkers.filter(m => m !== marker);
+      } else {
+        activeMarkers.push(marker);
+      }
+      
+      await this.saveJumpPointsSetting('activeMarkers', activeMarkers);
+      this.loadMarkers({...jumpPoints, activeMarkers});
+    } catch (error) {
+      console.error('Failed to toggle marker:', error);
+    }
+  }
+  
+  /**
+   * Add a custom marker
+   */
+  async addCustomMarker() {
+    const input = this.elements.customMarkerInput;
+    const marker = input.value.trim();
+    
+    if (!marker) return;
+    
+    if (marker.length > 30) {
+      this.showStatus('Marker too long (max 30 chars)', 'error');
+      return;
+    }
+    
+    try {
+      const settings = await StorageManager.getSettings();
+      const jumpPoints = settings.jumpPoints || {};
+      const customMarkers = jumpPoints.customMarkers || [];
+      const activeMarkers = jumpPoints.activeMarkers || DEFAULT_JUMP_MARKERS.slice();
+      
+      if (customMarkers.includes(marker) || DEFAULT_JUMP_MARKERS.includes(marker)) {
+        this.showStatus('Marker already exists', 'error');
+        return;
+      }
+      
+      const newCustomMarkers = [...customMarkers, marker];
+      const newActiveMarkers = [...activeMarkers, marker];
+      
+      await this.saveJumpPointsSetting('customMarkers', newCustomMarkers);
+      await this.saveJumpPointsSetting('activeMarkers', newActiveMarkers);
+      
+      input.value = '';
+      this.loadMarkers({...jumpPoints, customMarkers: newCustomMarkers, activeMarkers: newActiveMarkers});
+      this.showStatus('Marker added!', 'success');
+    } catch (error) {
+      console.error('Failed to add marker:', error);
+      this.showStatus('Failed to add marker', 'error');
+    }
+  }
+  
+  /**
+   * Remove a custom marker
+   * @param {string} marker - Marker to remove
+   */
+  async removeCustomMarker(marker) {
+    try {
+      const settings = await StorageManager.getSettings();
+      const jumpPoints = settings.jumpPoints || {};
+      const customMarkers = (jumpPoints.customMarkers || []).filter(m => m !== marker);
+      const activeMarkers = (jumpPoints.activeMarkers || DEFAULT_JUMP_MARKERS.slice()).filter(m => m !== marker);
+      
+      await this.saveJumpPointsSetting('customMarkers', customMarkers);
+      await this.saveJumpPointsSetting('activeMarkers', activeMarkers);
+      
+      this.loadMarkers({...jumpPoints, customMarkers, activeMarkers});
+      this.showStatus('Marker removed!', 'success');
+    } catch (error) {
+      console.error('Failed to remove marker:', error);
+      this.showStatus('Failed to remove marker', 'error');
+    }
+  }
+  
+  /**
+   * Save a jump points setting
+   * @param {string} key - Setting key
+   * @param {any} value - Setting value
+   */
+  async saveJumpPointsSetting(key, value) {
+    try {
+      const settings = await StorageManager.getSettings();
+      const jumpPoints = {
+        ...settings.jumpPoints,
+        [key]: value
+      };
+      
+      await StorageManager.updateSetting('jumpPoints', jumpPoints);
+      this.showStatus('Settings saved!', 'success');
+    } catch (error) {
+      console.error('Failed to save jump points setting:', error);
+      this.showStatus('Failed to save settings', 'error');
+    }
+  }
+  
+  /**
+   * Copy a template to clipboard
+   * @param {string} templateName - Template name
+   */
+  copyTemplate(templateName) {
+    const template = JUMP_TEMPLATES[templateName];
+    if (!template) return;
+    
+    navigator.clipboard.writeText(template).then(() => {
+      const copyIndicator = this.elements.templateCopied;
+      copyIndicator.classList.add('show');
+      
+      setTimeout(() => {
+        copyIndicator.classList.remove('show');
+      }, 2000);
+    }).catch(err => {
+      console.error('Failed to copy template:', err);
+      this.showStatus('Failed to copy template', 'error');
+    });
   }
 }
 

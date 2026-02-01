@@ -12,6 +12,7 @@ export const MESSAGE_TYPES = {
   // Content script -> Page script
   SET_ENABLED: 'TABOUT_SET_ENABLED',
   SET_DEBUG_MODE: 'TABOUT_SET_DEBUG_MODE',
+  SET_JUMP_POINTS: 'TABOUT_SET_JUMP_POINTS',
   
   // Page script -> Content script
   EDITOR_DETECTED: 'TABOUT_EDITOR_DETECTED',

@@ -47,6 +47,84 @@
         </div>
       </div>
       
+      <div class="section feature-new">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <h2>🚀 Smart Jump Points</h2>
+          <span class="new-badge">NEW</span>
+        </div>
+        <p class="section-description">Tab through code markers like TODO, FIXME, and custom placeholders. Perfect for LeetCode templates!</p>
+        
+        <div class="setting">
+          <div class="setting-info">
+            <h3>Enable Jump Points</h3>
+            <p>Jump to markers when Tab is pressed and no bracket/quote is nearby</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="jumpPointsEnabled">
+            <span class="slider"></span>
+          </label>
+        </div>
+        
+        <div class="setting">
+          <div class="setting-info">
+            <h3>Wrap Around</h3>
+            <p>Jump to first marker after reaching the last one</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="jumpPointsWrap">
+            <span class="slider"></span>
+          </label>
+        </div>
+        
+        <div class="setting">
+          <div class="setting-info">
+            <h3>Case Sensitive</h3>
+            <p>Distinguish between "TODO" and "todo"</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="jumpPointsCaseSensitive">
+            <span class="slider"></span>
+          </label>
+        </div>
+        
+        <div class="jump-markers-section">
+          <h3>Active Markers</h3>
+          <p class="markers-description">These markers will be detected when tabbing. Click to toggle.</p>
+          <div class="markers-grid" id="markersGrid">
+            <!-- Populated dynamically by JS -->
+          </div>
+          
+          <div class="custom-marker-input">
+            <input type="text" id="customMarkerInput" placeholder="Add custom marker (e.g., @FILL@)" maxlength="30">
+            <button id="addMarkerBtn" class="add-btn">Add</button>
+          </div>
+        </div>
+        
+        <div class="templates-section">
+          <h3>Quick Templates</h3>
+          <p class="templates-description">Copy common LeetCode templates with jump points built-in</p>
+          <div class="templates-grid">
+            <button class="template-btn" data-template="twoPointer">
+              <span class="template-icon">👉👈</span>
+              <span class="template-name">Two Pointer</span>
+            </button>
+            <button class="template-btn" data-template="slidingWindow">
+              <span class="template-icon">🪟</span>
+              <span class="template-name">Sliding Window</span>
+            </button>
+            <button class="template-btn" data-template="dfs">
+              <span class="template-icon">🌲</span>
+              <span class="template-name">DFS</span>
+            </button>
+            <button class="template-btn" data-template="binarySearch">
+              <span class="template-icon">🔍</span>
+              <span class="template-name">Binary Search</span>
+            </button>
+          </div>
+          <div id="templateCopied" class="template-copied">Copied to clipboard! ✓</div>
+        </div>
+      </div>
+      
       <div class="section">
         <h2>Supported Sites</h2>
         <div class="supported-sites">

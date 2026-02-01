@@ -123,11 +123,17 @@ class ContentScript {
         debugMode: settings.debugMode
       });
 
+      // Send jump points settings
+      MessageBus.sendToPage(MESSAGE_TYPES.SET_JUMP_POINTS, {
+        jumpPoints: settings.jumpPoints
+      });
+
       // Only log in debug mode
       if (this.debugMode) {
         console.log('[Tabout] Initial settings sent:', {
           enabled: settings.enabled && siteEnabled,
-          debugMode: settings.debugMode
+          debugMode: settings.debugMode,
+          jumpPoints: settings.jumpPoints
         });
       }
     } catch (error) {
@@ -168,6 +174,12 @@ class ContentScript {
         if (changes.debugMode) {
           MessageBus.sendToPage(MESSAGE_TYPES.SET_DEBUG_MODE, {
             debugMode: changes.debugMode.newValue
+          });
+        }
+
+        if (changes.jumpPoints) {
+          MessageBus.sendToPage(MESSAGE_TYPES.SET_JUMP_POINTS, {
+            jumpPoints: changes.jumpPoints.newValue
           });
         }
       } catch (error) {
@@ -229,7 +241,8 @@ class ContentScript {
         console.log('[Tabout][Content] Sending current settings to page script:', {
           globalEnabled: settings.enabled,
           siteEnabled,
-          debugMode: settings.debugMode
+          debugMode: settings.debugMode,
+          jumpPoints: settings.jumpPoints
         });
       }
 
@@ -243,6 +256,11 @@ class ContentScript {
       // Send current debug mode
       MessageBus.sendToPage(MESSAGE_TYPES.SET_DEBUG_MODE, {
         debugMode: settings.debugMode
+      });
+
+      // Send jump points settings
+      MessageBus.sendToPage(MESSAGE_TYPES.SET_JUMP_POINTS, {
+        jumpPoints: settings.jumpPoints
       });
     } catch (error) {
       console.error('[Tabout][Content] Failed to send current settings:', error);

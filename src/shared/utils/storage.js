@@ -4,9 +4,11 @@
  * @property {Object<string, boolean>} siteEnabled - Per-site enable/disable
  * @property {Object<string, Array>} customPairs - Custom pairs per language
  * @property {boolean} debugMode - Whether to log debug information
+ * @property {Object} jumpPoints - Jump points configuration
  */
 
 import { getSupportedDomains } from '../constants/sites.js';
+import { DEFAULT_JUMP_MARKERS } from '../constants/jump-points.js';
 
 /**
  * Generate default site settings from supported domains
@@ -27,7 +29,14 @@ export const DEFAULT_SETTINGS = {
   enabled: true,
   siteEnabled: generateDefaultSiteSettings(), // Single source of truth
   customPairs: {},
-  debugMode: false
+  debugMode: false,
+  jumpPoints: {
+    enabled: true,
+    caseSensitive: false,
+    wrapAround: true,
+    activeMarkers: DEFAULT_JUMP_MARKERS.slice(),
+    customMarkers: []
+  }
 };
 
 /**
@@ -68,6 +77,27 @@ function validateSettings(data) {
   // Validate debugMode (must be boolean)
   if (typeof data.debugMode === 'boolean') {
     validated.debugMode = data.debugMode;
+  }
+
+  // Validate jumpPoints settings
+  if (data.jumpPoints && typeof data.jumpPoints === 'object') {
+    validated.jumpPoints = { ...DEFAULT_SETTINGS.jumpPoints };
+    
+    if (typeof data.jumpPoints.enabled === 'boolean') {
+      validated.jumpPoints.enabled = data.jumpPoints.enabled;
+    }
+    if (typeof data.jumpPoints.caseSensitive === 'boolean') {
+      validated.jumpPoints.caseSensitive = data.jumpPoints.caseSensitive;
+    }
+    if (typeof data.jumpPoints.wrapAround === 'boolean') {
+      validated.jumpPoints.wrapAround = data.jumpPoints.wrapAround;
+    }
+    if (Array.isArray(data.jumpPoints.activeMarkers)) {
+      validated.jumpPoints.activeMarkers = data.jumpPoints.activeMarkers.filter(m => typeof m === 'string');
+    }
+    if (Array.isArray(data.jumpPoints.customMarkers)) {
+      validated.jumpPoints.customMarkers = data.jumpPoints.customMarkers.filter(m => typeof m === 'string');
+    }
   }
 
   return validated;

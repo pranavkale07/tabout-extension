@@ -16,10 +16,42 @@
 ## Features
 
 - **Smart tab‑out** for `()`, `[]`, `{}`, `' '`, `" "`, `<>`, commas and semicolons
+- **🚀 Smart Jump Points** (NEW) - Tab through code markers like `TODO`, `FIXME`, `___` placeholders
+- **Quick Templates** - Pre-built LeetCode templates (Two Pointer, Sliding Window, DFS, Binary Search)
 - **Multiple cursor** support
 - **Works across LeetCode**: problems, contests, playground
 - **Lightweight**: no UI clutter, minimal overhead
 - **Privacy-focused**: no data collection, local processing only
+
+### 🌟 Smart Jump Points
+A unique feature that lets you tab through custom markers in your code - perfect for LeetCode templates and competitive programming!
+
+**How it works:**
+1. Add markers like `TODO`, `FIXME`, or `___` in your code
+2. Press Tab to jump between markers sequentially
+3. Use built-in templates or create custom markers
+
+**Example:**
+```cpp
+int left = 0, right = ___-1;  // Press Tab → jumps here
+while (left < right) {
+    // TODO: Add logic              // Press Tab again → jumps here
+    if (___) {                      // Press Tab again → jumps here
+        left++;
+    }
+}
+```
+
+**Default Markers:** `// TODO`, `// FIXME`, `// FILL`, `// COMPLETE`, `@JUMP@`, `___`, `null`
+
+**Features:**
+- ✅ Quick templates for common patterns (Two Pointer, Sliding Window, DFS, Binary Search)
+- ✅ Custom markers support
+- ✅ Case-sensitive/insensitive search
+- ✅ Wrap-around navigation
+- ✅ Click-to-copy templates
+
+See [JUMP_POINTS_FEATURE.md](JUMP_POINTS_FEATURE.md) for detailed documentation.
 
 ## Installation
 
@@ -46,6 +78,10 @@
 ### Controls
 - **Popup**: Click the extension icon to quickly enable/disable
 - **Options**: Right-click extension → Options for advanced settings
+  - Configure Smart Jump Points markers
+  - Enable/disable jump points feature
+  - Add custom markers
+  - Copy quick templates
 
 ## Privacy & Permissions
 
