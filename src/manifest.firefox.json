@@ -30,7 +30,9 @@
         "https://leetcode.cn/*",
         "https://*.leetcode.cn/*",
         "https://leetcode.com/*",
-        "https://*.leetcode.com/*"
+        "https://*.leetcode.com/*",
+        "https://takeuforward.org/*",
+        "https://www.takeuforward.org/*"
     ],
     "content_scripts": [
         {
@@ -46,7 +48,9 @@
                 "https://*.leetcode.cn/playground/*",
                 "https://*.leetcode.com/problems/*",
                 "https://*.leetcode.com/contest/*",
-                "https://*.leetcode.com/playground/*"
+                "https://*.leetcode.com/playground/*",
+                "https://takeuforward.org/plus*",
+                "https://www.takeuforward.org/plus*"
             ],
             "js": [
                 "content.js"
@@ -68,7 +72,9 @@
                 "https://leetcode.cn/*",
                 "https://*.leetcode.cn/*",
                 "https://leetcode.com/*",
-                "https://*.leetcode.com/*"
+                "https://*.leetcode.com/*",
+                "https://takeuforward.org/*",
+                "https://www.takeuforward.org/*"
             ]
         }
     ]

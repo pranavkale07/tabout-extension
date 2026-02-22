@@ -90,8 +90,8 @@ class OptionsPage {
   formatSiteName(domain) {
     const nameMap = {
       'leetcode.com': 'LeetCode',
-      'leetcode.cn': 'LeetCode (CN)'
-      // Future sites can be added here automatically
+      'leetcode.cn': 'LeetCode (CN)',
+      'takeuforward.org': 'TakeUForward'
     };
     return nameMap[domain] || domain.charAt(0).toUpperCase() + domain.slice(1).replace('.com', '');
   }

@@ -145,8 +145,8 @@ class PopupController {
   formatSiteName(hostname) {
     const nameMap = {
       'leetcode.com': 'LeetCode',
-      'leetcode.cn': 'LeetCode (CN)'
-      // Future sites can be added here automatically
+      'leetcode.cn': 'LeetCode (CN)',
+      'takeuforward.org': 'TakeUForward'
     };
 
     // Find matching domain (handle subdomains)
@@ -207,7 +207,8 @@ class PopupController {
       // Only perform verification, don't override the display
       const results = await browser.scripting.executeScript({
         target: { tabId: this.currentTab.id },
-        function: this.detectEditorOnPage
+        function: this.detectEditorOnPage,
+        world: 'MAIN'
       });
 
       if (results && results[0] && results[0].result) {

@@ -8,7 +8,7 @@
 
 /**
  * Configuration for supported coding sites
- * Currently supports: LeetCode
+ * Currently supports: LeetCode, TakeUForward
  * Architecture allows easy addition of new sites in the future
  */
 const LEETCODE_CONFIG = {
@@ -24,12 +24,25 @@ const LEETCODE_CONFIG = {
   }
 };
 
+const TAKEUFORWARD_CONFIG = {
+  editor: 'monaco',
+  selectors: ['.monaco-editor'],
+  waitStrategy: 'mutation-observer',
+  editorApi: {
+    namespace: 'monaco',
+    getEditors: () => window.monaco?.editor?.getEditors?.() || [],
+    keyCode: {
+      Tab: 3
+    }
+  }
+};
+
 export const SITE_CONFIGS = {
   'leetcode.com': LEETCODE_CONFIG,
-  'leetcode.cn': LEETCODE_CONFIG
+  'leetcode.cn': LEETCODE_CONFIG,
+  'takeuforward.org': TAKEUFORWARD_CONFIG
   // Future sites can be added here:
   // 'geeksforgeeks.org': { ... },
-  // 'takeuforward.org': { ... }
 };
 
 /**
