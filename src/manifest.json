@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "TabOut for LeetCode",
+  "name": "TabOut",
   "version": "{{VERSION}}",
-  "description": "Tab out of brackets, quotes, etc in LeetCode's code editor",
+  "description": "Tab out of brackets, quotes, etc in online code editors",
   "permissions": [
     "storage",
     "scripting",
@@ -15,7 +15,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "TabOut for LeetCode"
+    "default_title": "TabOut"
   },
   "host_permissions": [
     "https://leetcode.cn/*",

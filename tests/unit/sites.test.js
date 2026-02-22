@@ -46,6 +46,21 @@ describe('sites', () => {
       expect(config.waitStrategy).toBe('mutation-observer');
     });
 
+    test('should return monaco config for takeuforward.org', () => {
+      const config = getSiteConfig('takeuforward.org');
+      
+      expect(config).toBeDefined();
+      expect(config.editor).toBe('monaco');
+      expect(config.selectors).toEqual(['.monaco-editor']);
+    });
+
+    test('should return monaco config for www.takeuforward.org', () => {
+      const config = getSiteConfig('www.takeuforward.org');
+      
+      expect(config).toBeDefined();
+      expect(config.editor).toBe('monaco');
+    });
+
     test('should return null for unsupported domain', () => {
       const config = getSiteConfig('example.com');
       
@@ -99,6 +114,14 @@ describe('sites', () => {
 
     test('should return true for www.leetcode.cn', () => {
       expect(isSupportedSite('www.leetcode.cn')).toBe(true);
+    });
+
+    test('should return true for takeuforward.org', () => {
+      expect(isSupportedSite('takeuforward.org')).toBe(true);
+    });
+
+    test('should return true for www.takeuforward.org', () => {
+      expect(isSupportedSite('www.takeuforward.org')).toBe(true);
     });
 
     test('should return false for example.com', () => {

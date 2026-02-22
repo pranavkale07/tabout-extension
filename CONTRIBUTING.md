@@ -1,4 +1,4 @@
-# Contributing to TabOut for LeetCode
+# Contributing to TabOut
 
 First off, thanks for taking the time to contribute! We're excited to welcome you to the TabOut community.
 
@@ -79,4 +79,4 @@ We love suggestions! Please:
 - For questions: Open a [Discussion](https://github.com/pranavkale07/tabout-extension/discussions)
 - For bugs and features: [GitHub Issues](https://github.com/pranavkale07/tabout-extension/issues)
 
-Thank you for contributing to TabOut for LeetCode!
+Thank you for contributing to TabOut!

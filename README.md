@@ -1,13 +1,13 @@
 <div align="center">
 
-![TabOut for LeetCode](src/assets/logos/tabout-icon-128_crp.png)
+![TabOut](src/assets/logos/tabout-icon-128_crp.png)
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-v0.2.0-green)](https://chromewebstore.google.com/detail/tabout-for-leetcode/eecmlpblnpechggegghledjledbkebfp)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-v0.2.1-green)](https://chromewebstore.google.com/detail/tabout-for-leetcode/eecmlpblnpechggegghledjledbkebfp)
 [![Firefox Add-ons](https://img.shields.io/badge/Firefox%20Add--ons-v0.2.0-orange)](https://addons.mozilla.org/en-US/firefox/addon/tabout-extension/)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/mv3/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**TabOut** adds intelligent "tab‑out" to LeetCode's editor. Forget arrow keys — just hit Tab and fly past ) ] } ' " > , ;
+**TabOut** adds intelligent tab-out to various online coding editors. Forget arrow keys — just hit Tab and fly past ) ] } ' " > , ;
 
 
 
@@ -17,7 +17,7 @@
 
 - **Smart tab‑out** for `()`, `[]`, `{}`, `' '`, `" "`, `<>`, commas and semicolons
 - **Multiple cursor** support
-- **Works across LeetCode**: problems, contests, playground
+- **Works across various online coding platforms** with Monaco-based editors (LeetCode, TakeUForward)
 - **Lightweight**: no UI clutter, minimal overhead
 - **Privacy-focused**: no data collection, local processing only
 
@@ -50,12 +50,12 @@
 ## Privacy & Permissions
 
 ### Data Collection
-- **No personal data** or problem content is collected or transmitted
+- **No personal data** or code content is collected or transmitted
 - **Local processing only** - all tab-out logic runs in your browser
 - **Minimal storage** - only user preferences saved locally via browser storage
 
 ### Required Permissions
-- **Host (leetcode.com, leetcode.cn)**: Run only on LeetCode pages to access the editor context
+- **Host**: Run only on supported coding platforms to access the editor context
 - **Scripting**: Inject a small page script to access Monaco APIs
 - **Storage**: Save minimal preferences (enable/disable, debug) in browser storage
 - **ActiveTab**: Read the active tab's hostname in the popup to display site status (privacy-focused alternative to broad tabs permission)
@@ -67,7 +67,7 @@ We welcome contributions! To report bugs, fix issues, or add features, visit the
 
 ## Future Enhancements
 
-- **More Platforms**: Support for other coding platforms (GeeksForGeeks, takeuforward, HackerRank, CodeChef, etc.)
+- **More Platforms**: Support for other coding platforms (GeeksForGeeks, HackerRank, CodeChef, etc.)
 - **Custom Delimiters**: User-defined tab-out patterns
 - **Keyboard Shortcuts**: Customizable key bindings
 
@@ -75,7 +75,7 @@ We welcome contributions! To report bugs, fix issues, or add features, visit the
 
 Special thanks to:
 - [TabOut (VS Code Extension)](https://marketplace.visualstudio.com/items?itemName=albert.TabOut) - The VS Code extension that inspired this project
-- [Monaco Editor](https://microsoft.github.io/monaco-editor/) - The powerful code editor that powers LeetCode and VS Code
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/) - The powerful code editor that powers LeetCode, various online IDEs and VS Code
 - The open-source community for inspiration and feedback
 
 ## License
