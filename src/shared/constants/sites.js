@@ -19,7 +19,7 @@ const LEETCODE_CONFIG = {
     namespace: 'monaco',
     getEditors: () => window.monaco?.editor?.getEditors?.() || [],
     keyCode: {
-      Tab: 3  // monaco.KeyCode.Tab
+      Tab: 2  // monaco.KeyCode.Tab
     }
   }
 };
@@ -32,7 +32,7 @@ const TAKEUFORWARD_CONFIG = {
     namespace: 'monaco',
     getEditors: () => window.monaco?.editor?.getEditors?.() || [],
     keyCode: {
-      Tab: 3
+      Tab: 2
     }
   }
 };

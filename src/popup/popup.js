@@ -207,8 +207,7 @@ class PopupController {
       // Only perform verification, don't override the display
       const results = await browser.scripting.executeScript({
         target: { tabId: this.currentTab.id },
-        function: this.detectEditorOnPage,
-        world: 'MAIN'
+        function: this.detectEditorOnPage
       });
 
       if (results && results[0] && results[0].result) {
@@ -228,30 +227,12 @@ class PopupController {
 
   /**
    * Function injected into page to detect editor
-   * (This runs in the page context)
+   * (Runs in the page's DOM, from the isolated world)
    */
   detectEditorOnPage() {
-    // Simple detection - just check if any editor infrastructure is present
-
-    // Check for Monaco
-    if (window.monaco && window.monaco.editor) {
-      const editors = window.monaco.editor.getEditors();
-      if (editors && editors.length > 0) {
-        return { detected: true };
-      }
-    }
-
-    // Check for CodeMirror
-    if (document.querySelector('.CodeMirror') || document.querySelector('.cm-editor')) {
-      return { detected: true };
-    }
-
-    // Check for our extension marker  
-    if (window.__TABOUT_EXTENSION_LOADED) {
-      return { detected: true };
-    }
-
-    return { detected: false };
+    // Simple detection based on DOM only (Monaco editor container)
+    const monacoElement = document.querySelector('.monaco-editor');
+    return { detected: !!monacoElement };
   }
 
   /**
