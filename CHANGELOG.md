@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-02-04
+
+### Added
+- Support for TakeUForward (takeuforward.org) using the Monaco editor
+
+### Changed
+- Rebranded extension name from "TabOut for LeetCode" to **TabOut**
+- Updated documentation and metadata to describe support for Monaco-based online coding editors (including LeetCode and TakeUForward)
+- Corrected stored Monaco `KeyCode` mapping for Tab (`Tab: 2` instead of `3`)
+- Hardened popup editor detection to use DOM-only checks without executing in the page's main world
+
 ## [0.2.0] - 2025-12-02
 
 ### Added
