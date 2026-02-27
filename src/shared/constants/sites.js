@@ -11,7 +11,7 @@
  * Currently supports: LeetCode, TakeUForward
  * Architecture allows easy addition of new sites in the future
  */
-const LEETCODE_CONFIG = {
+const MONACO_CONFIG = {
   editor: 'monaco',
   selectors: ['.monaco-editor'],
   waitStrategy: 'mutation-observer',
@@ -19,22 +19,16 @@ const LEETCODE_CONFIG = {
     namespace: 'monaco',
     getEditors: () => window.monaco?.editor?.getEditors?.() || [],
     keyCode: {
-      Tab: 2  // monaco.KeyCode.Tab
+      Tab: 2 // monaco.KeyCode.Tab
     }
   }
 };
+const LEETCODE_CONFIG = {
+  ...MONACO_CONFIG,
+};
 
 const TAKEUFORWARD_CONFIG = {
-  editor: 'monaco',
-  selectors: ['.monaco-editor'],
-  waitStrategy: 'mutation-observer',
-  editorApi: {
-    namespace: 'monaco',
-    getEditors: () => window.monaco?.editor?.getEditors?.() || [],
-    keyCode: {
-      Tab: 2
-    }
-  }
+  ...MONACO_CONFIG,
 };
 
 export const SITE_CONFIGS = {
