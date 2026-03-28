@@ -7,7 +7,17 @@ import { getSiteConfig, isSupportedSite } from '../shared/constants/sites.js';
  */
 class ContentScript {
   constructor() {
-    this.currentSite = window.location.hostname;
+    //use top-level hostname if current context's hostname is missing
+    let hostname = window.location.hostname;
+    if(!hostname || hostname === '' ) {
+      try {
+        hostname = window.top.location.hostname;
+      } catch (e) {
+        // Fallback if cross-origin policy blocks window.top access
+        hostname = '';
+      }
+    }
+    this.currentSite = hostname;
     this.siteConfig = getSiteConfig(this.currentSite);
     this.pageScriptInjected = false;
     this.isUnloading = false;

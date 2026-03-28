@@ -21,7 +21,11 @@
     "https://leetcode.cn/*",
     "https://*.leetcode.cn/*",
     "https://leetcode.com/*",
-    "https://*.leetcode.com/*"
+    "https://*.leetcode.com/*",
+
+    "https://geeksforgeeks.org/*",
+    "https://*.geeksforgeeks.org/*"
+
   ],
   "content_scripts": [
     {
@@ -37,11 +41,16 @@
         "https://*.leetcode.cn/playground/*",
         "https://*.leetcode.com/problems/*",
         "https://*.leetcode.com/contest/*",
-        "https://*.leetcode.com/playground/*"
+        "https://*.leetcode.com/playground/*",
+        "https://*.geeksforgeeks.org/*",
+        "https://practice.geeksforgeeks.org/problems/*",
+        "https://www.geeksforgeeks.org/problems/*",
+        "https://www.geeksforgeeks.org/*"
+
       ],
       "js": ["content.js"],
       "run_at": "document_idle",
-      "all_frames": false
+      "all_frames": true
     }
   ],
   "options_ui": {
@@ -55,7 +64,10 @@
         "https://leetcode.cn/*",
         "https://*.leetcode.cn/*",
         "https://leetcode.com/*",
-        "https://*.leetcode.com/*"
+        "https://*.leetcode.com/*",
+        "https://geeksforgeeks.org/*",
+        "https://*.geeksforgeeks.org/*"
+
       ]
     }
   ]

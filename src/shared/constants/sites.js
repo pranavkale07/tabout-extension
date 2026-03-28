@@ -24,11 +24,67 @@ const LEETCODE_CONFIG = {
   }
 };
 
+const GFG_CONFIG = {
+  editor: 'ace',
+  selectors: [
+    '.ace_editor',
+  ],
+  waitStrategy: 'mutation-observer',
+  editorApi: {
+    namespace: 'monaco',
+    
+    getEditors: () =>{
+      //if monaco exists in current window
+    //get editors, if editors found return them
+    if(window.monaco?.editor){
+      const editors = window.monaco.editor.getEditors()
+        if(editors.length) return editors;
+    }
+    //check editor inside frame
+    //check for all iframes
+    //const iframes = document.querySelectorAll('iframe');
+
+    //for every iframe 
+    //access window
+    // for (const iframe of iframes){
+    //   try{
+    //     const iframeWindow = iframe.contentWindow; //get iframe's window
+    //     //return editor API if iframeWindow exists, monaco is loaded and editor is available
+    //     if(iframeWindow?.monaco?.editor){
+    //   const editors = iframeWindow.monaco.editor.getEditors()
+    //     if(editors.length) return editors;
+    //     }
+    // } catch(e){
+    //   // cross origin iframe =>ignore
+    // }
+    // }
+
+    //load window Ace
+    if(window.ace) {
+      //intialize code editor instance 
+      // returns API object
+      const el = document.querySelector('.ace_editor');
+      if (el && el.env && el.env.editor) {
+        return [el.env.editor];
+      }
+    }
+    //CodeMirror
+    const cm = document.querySelector('.CodeMirror');
+    if (cm) return [cm]
+
+    return [];
+    },
+    keyCode: {
+      Tab: 3  // monaco.KeyCode.Tab
+    }
+  }
+};
+
 export const SITE_CONFIGS = {
   'leetcode.com': LEETCODE_CONFIG,
-  'leetcode.cn': LEETCODE_CONFIG
+  'leetcode.cn': LEETCODE_CONFIG,
   // Future sites can be added here:
-  // 'geeksforgeeks.org': { ... },
+  'geeksforgeeks.org': GFG_CONFIG,
   // 'takeuforward.org': { ... }
 };
 

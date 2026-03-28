@@ -101,7 +101,7 @@ class PopupController {
       return;
     }
 
-    const hostname = new URL(this.currentTab.url).hostname;
+    const hostname = new URL(this.currentTab.url).hostname.toLowerCase();
     const siteConfig = getSiteConfig(hostname);
     const isSupported = isSupportedSite(hostname);
 
@@ -116,9 +116,9 @@ class PopupController {
       this.elements.siteStatusIcon.className = 'status-icon active';
       this.elements.siteStatusText.textContent = this.formatSiteName(hostname);
 
-      // Hide site-specific toggle since we only support LeetCode for now
+      // Hide site-specific toggle since we support LeetCode and GeeksforGeeks for now
       // TODO: Re-enable when adding more sites
-      this.elements.siteToggle.style.display = 'none';
+      this.elements.siteToggle.style.display = 'block';
 
       // Still track the setting internally for future use
       const siteEnabled = await this.getSiteEnabledStatus(hostname);
@@ -127,12 +127,12 @@ class PopupController {
       // Update editor status based on site config (more reliable than detection)
       if (siteConfig) {
         this.updateEditorStatus(siteConfig.editor, true); // Pass true to indicate it's active
-        await this.checkEditorPresence();
+        setTimeoue(() => this.checkEditorPresence(), 1000);
       }
     } else {
       this.elements.siteStatusIcon.className = 'status-icon inactive';
       this.elements.siteStatusText.textContent = 'Not Supported';
-      this.elements.siteToggle.style.display = 'none';
+      this.elements.siteToggle.style.display = 'block';
       this.updateEditorStatus('Unknown', false);
     }
   }
@@ -145,7 +145,8 @@ class PopupController {
   formatSiteName(hostname) {
     const nameMap = {
       'leetcode.com': 'LeetCode',
-      'leetcode.cn': 'LeetCode (CN)'
+      'leetcode.cn': 'LeetCode (CN)',
+      'geeksforgeeks.org' : 'GeeksforGeeks'
       // Future sites can be added here automatically
     };
 
@@ -236,6 +237,14 @@ class PopupController {
     if (window.monaco && window.monaco.editor) {
       const editors = window.monaco.editor.getEditors();
       if (editors && editors.length > 0) {
+        return { detected: true };
+      }
+      // Ace support
+      if (window.ace && document.querySelector('.ace_editor')) {
+        return { detected: true };
+      }
+      //CodeMirror Support
+      if (document.querySelector('.CodeMirror') || document.querySelector('.cm-editor')) {
         return { detected: true };
       }
     }

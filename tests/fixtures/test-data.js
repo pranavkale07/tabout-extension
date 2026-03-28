@@ -57,7 +57,8 @@ export const STORAGE_TEST_CASES = [
       enabled: true,
       siteEnabled: {
         'leetcode.com': true,
-        'leetcode.cn': true
+        'leetcode.cn': true,
+        'geeksforgeeks.org': true
       },
       customPairs: {},
       debugMode: false
@@ -75,7 +76,8 @@ export const STORAGE_TEST_CASES = [
       enabled: false,
       siteEnabled: {
         'leetcode.com': false,
-        'leetcode.cn': true
+        'leetcode.cn': true,
+         'geeksforgeeks.org': true
       },
       customPairs: {},
       debugMode: false

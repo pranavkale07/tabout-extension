@@ -19,7 +19,8 @@ describe('storage', () => {
         enabled: true,
         siteEnabled: {
           'leetcode.com': true,
-          'leetcode.cn': true
+          'leetcode.cn': true,
+          'geeksforgeeks.org': true
         },
         customPairs: {},
         debugMode: false
@@ -42,7 +43,8 @@ describe('storage', () => {
         enabled: false,
         siteEnabled: {
           'leetcode.com': false,
-          'leetcode.cn': true
+          'leetcode.cn': true,
+          'geeksforgeeks.org': true
         },
         customPairs: {},
         debugMode: false
@@ -58,7 +60,8 @@ describe('storage', () => {
         enabled: true,
         siteEnabled: {
           'leetcode.com': true,
-          'leetcode.cn': true
+          'leetcode.cn': true,
+          'geeksforgeeks.org': true
         },
         customPairs: {},
         debugMode: false
@@ -181,7 +184,8 @@ describe('storage', () => {
         enabled: true, // Default value for invalid boolean
         siteEnabled: {
           'leetcode.com': true, // Default value for invalid object
-          'leetcode.cn': true
+          'leetcode.cn': true,
+          'geeksforgeeks.org': true
         },
         customPairs: {}, // Default value for invalid object
         debugMode: false // Default value for invalid boolean
@@ -225,7 +229,8 @@ describe('storage', () => {
         enabled: false, // Preserved valid value
         siteEnabled: {
           'leetcode.com': true, // Default for invalid object
-          'leetcode.cn': true
+          'leetcode.cn': true,
+          'geeksforgeeks.org': true
         },
         customPairs: { 'python': [['(', ')']] }, // Preserved valid value
         debugMode: false // Default for invalid boolean
@@ -253,7 +258,7 @@ describe('storage', () => {
       // Should only preserve valid customPairs entries
       expect(settings).toEqual({
         enabled: true,
-        siteEnabled: { 'leetcode.com': true, 'leetcode.cn': true },
+        siteEnabled: { 'leetcode.com': true, 'leetcode.cn': true,  'geeksforgeeks.org': true },
         customPairs: {
           'python': [['(', ')']], // Preserved valid entry
           'typescript': [['{', '}']] // Preserved valid entry

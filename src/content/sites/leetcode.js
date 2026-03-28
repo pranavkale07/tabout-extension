@@ -233,6 +233,7 @@ export class LeetCodeHandler {
         const lineText = model.getLineContent(position.lineNumber) || '';
         const newColumn = shouldTabout(lineText, position.column, pairs);
         
+        
         if (this.debugMode) {
           console.log('[Tabout][LeetCode] Tab decision:', {
             line: lineText,

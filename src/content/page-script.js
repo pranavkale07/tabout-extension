@@ -1,7 +1,7 @@
 import { LeetCodeHandler } from './sites/leetcode.js';
 import { MessageBus, MESSAGE_TYPES } from '../shared/utils/messaging.js';
 import { getSiteConfig } from '../shared/constants/sites.js';
-
+import { GFGHandler } from './sites/geeksforgeeks.js';
 /**
  * Page script - runs in page context to access editor APIs
  */
@@ -45,6 +45,30 @@ import { getSiteConfig } from '../shared/constants/sites.js';
           // Create handler only if none exists
           if (!currentHandler) {
             currentHandler = new LeetCodeHandler();
+            await currentHandler.initialize();
+            if (debugMode) {
+              console.log('[Tabout][Page] New handler created and initialized');
+            }
+          }
+          
+          // After initialization, ensure currentHandler points to global instance
+          if (window.__TABOUT_HANDLER_INSTANCE && window.__TABOUT_HANDLER_INSTANCE !== currentHandler) {
+            if (debugMode) {
+              console.log('[Tabout][Page] Updating currentHandler to point to global instance');
+            }
+            currentHandler = window.__TABOUT_HANDLER_INSTANCE;
+          }
+          
+          MessageBus.sendToContent(MESSAGE_TYPES.EDITOR_DETECTED, {
+            site: hostname,
+            editor: siteConfig.editor,
+            ready: currentHandler.isReady()
+          });
+          break;
+        case 'ace':
+          // Create handler only if none exists
+          if (!currentHandler) {
+            currentHandler = new GFGHandler();
             await currentHandler.initialize();
             if (debugMode) {
               console.log('[Tabout][Page] New handler created and initialized');

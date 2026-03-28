@@ -1,7 +1,9 @@
-import { getSiteConfig, isSupportedSite } from '../../src/shared/constants/sites.js';
+import { getSiteConfig, isSupportedSite} from '../../src/shared/constants/sites.js';
 import { SITES_TEST_CASES } from '../fixtures/test-data.js';
 
-describe('sites', () => {
+describe('sites ', () => {
+  //const domains = getSupportedDomains();
+
   describe('getSiteConfig', () => {
     test('should return leetcode config for leetcode.com', () => {
       const config = getSiteConfig('leetcode.com');
@@ -157,6 +159,83 @@ describe('sites', () => {
       expect(isSupportedSite('leetcode.com.')).toBe(false);
       expect(isSupportedSite('.leetcode.com')).toBe(true); // This is actually a valid subdomain
       expect(isSupportedSite('leetcode..com')).toBe(false);
+    });
+  });
+});
+
+describe('sites', () => {
+  describe('getSiteConfig', () => {
+    test('should return geeksforgeeks config for geeksforgeeks.org', () => {
+      const config = getSiteConfig('geeksforgeeks.org');
+      
+      expect(config).toBeDefined();
+
+      expect(config.editor).toBe('monaco');
+      
+      expect(config.selectors).toEqual('.monaco-editor');
+      expect(config.selectors).toEqual('.ace_editor');
+      expect(config.selectors).toEqual('.CodeMirror');
+      expect(config.waitStrategy).toBe('mutation-observer');
+    });
+
+    test('should return geeksforgeeks config for www.geeksforgeeks.org', () => {
+      const config = getSiteConfig('www.geeksforgeeks.org');
+      
+      expect(config).toBeDefined();
+      expect(config.editor).toBe('monaco');
+      expect(config.selectors).toEqual('.monaco-editor');
+      expect(config.selectors).toEqual('.ace_editor');
+      expect(config.selectors).toEqual('.CodeMirror');
+    });
+
+    // test('should return geeksforgeeks config for contest.geeksforgeeks.org', () => {
+    //   const config = getSiteConfig('contest.geeksforgeeks.org');
+      
+    //   expect(config).toBeDefined();
+    //   expect(config.editor).toBe('monaco');
+    //   expect(config.selectors).toEqual(['.monaco-editor']);
+    // });
+
+    // test('should return leetcode config for leetcode.cn', () => {
+    //   const config = getSiteConfig('leetcode.cn');
+      
+    //   expect(config).toBeDefined();
+    //   expect(config.editor).toBe('monaco');
+    //   expect(config.selectors).toEqual(['.monaco-editor']);
+    //   expect(config.waitStrategy).toBe('mutation-observer');
+    // });
+
+    // test('should return leetcode config for www.leetcode.cn', () => {
+    //   const config = getSiteConfig('www.leetcode.cn');
+      
+    //   expect(config).toBeDefined();
+    //   expect(config.editor).toBe('monaco');
+    //   expect(config.selectors).toEqual(['.monaco-editor']);
+    //   expect(config.waitStrategy).toBe('mutation-observer');
+    // });
+
+    test('should return null for unsupported domain', () => {
+      const config = getSiteConfig('example.com');
+      
+      expect(config).toBeNull();
+    });
+
+    test('should return null for empty hostname', () => {
+      const config = getSiteConfig('');
+      
+      expect(config).toBeNull();
+    });
+
+    test('should return null for undefined hostname', () => {
+      const config = getSiteConfig(undefined);
+      
+      expect(config).toBeNull();
+    });
+
+    test('should return null for null hostname', () => {
+      const config = getSiteConfig(null);
+      
+      expect(config).toBeNull();
     });
   });
 });
