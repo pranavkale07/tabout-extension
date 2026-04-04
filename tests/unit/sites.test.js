@@ -56,9 +56,25 @@ describe('sites', () => {
 
     test('should return monaco config for www.takeuforward.org', () => {
       const config = getSiteConfig('www.takeuforward.org');
-      
+
       expect(config).toBeDefined();
       expect(config.editor).toBe('monaco');
+    });
+
+    test('should return ace config for geeksforgeeks.org', () => {
+      const config = getSiteConfig('geeksforgeeks.org');
+
+      expect(config).toBeDefined();
+      expect(config.editor).toBe('ace');
+      expect(config.selectors).toEqual(['.ace_editor']);
+      expect(config.waitStrategy).toBe('mutation-observer');
+    });
+
+    test('should return ace config for www.geeksforgeeks.org', () => {
+      const config = getSiteConfig('www.geeksforgeeks.org');
+
+      expect(config).toBeDefined();
+      expect(config.editor).toBe('ace');
     });
 
     test('should return null for unsupported domain', () => {
@@ -122,6 +138,14 @@ describe('sites', () => {
 
     test('should return true for www.takeuforward.org', () => {
       expect(isSupportedSite('www.takeuforward.org')).toBe(true);
+    });
+
+    test('should return true for geeksforgeeks.org', () => {
+      expect(isSupportedSite('geeksforgeeks.org')).toBe(true);
+    });
+
+    test('should return true for www.geeksforgeeks.org', () => {
+      expect(isSupportedSite('www.geeksforgeeks.org')).toBe(true);
     });
 
     test('should return false for example.com', () => {

@@ -31,12 +31,28 @@ const TAKEUFORWARD_CONFIG = {
   ...MONACO_CONFIG,
 };
 
+const ACE_CONFIG = {
+  editor: 'ace',
+  selectors: ['.ace_editor'],
+  waitStrategy: 'mutation-observer',
+  editorApi: {
+    namespace: 'ace',
+    getEditor: () => {
+      const el = document.querySelector('.ace_editor');
+      return el && window.ace?.edit?.(el);
+    }
+  }
+};
+
+const GFG_CONFIG = {
+  ...ACE_CONFIG,
+};
+
 export const SITE_CONFIGS = {
   'leetcode.com': LEETCODE_CONFIG,
   'leetcode.cn': LEETCODE_CONFIG,
-  'takeuforward.org': TAKEUFORWARD_CONFIG
-  // Future sites can be added here:
-  // 'geeksforgeeks.org': { ... },
+  'takeuforward.org': TAKEUFORWARD_CONFIG,
+  'geeksforgeeks.org': GFG_CONFIG,
 };
 
 /**

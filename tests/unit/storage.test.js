@@ -20,7 +20,8 @@ describe('storage', () => {
         siteEnabled: {
           'leetcode.com': true,
           'leetcode.cn': true,
-          'takeuforward.org': true
+          'takeuforward.org': true,
+          'geeksforgeeks.org': true
         },
         customPairs: {},
         debugMode: false
@@ -44,7 +45,8 @@ describe('storage', () => {
         siteEnabled: {
           'leetcode.com': false,
           'leetcode.cn': true,
-          'takeuforward.org': true
+          'takeuforward.org': true,
+          'geeksforgeeks.org': true
         },
         customPairs: {},
         debugMode: false
@@ -61,7 +63,8 @@ describe('storage', () => {
         siteEnabled: {
           'leetcode.com': true,
           'leetcode.cn': true,
-          'takeuforward.org': true
+          'takeuforward.org': true,
+          'geeksforgeeks.org': true
         },
         customPairs: {},
         debugMode: false
@@ -185,7 +188,8 @@ describe('storage', () => {
         siteEnabled: {
           'leetcode.com': true, // Default value for invalid object
           'leetcode.cn': true,
-          'takeuforward.org': true
+          'takeuforward.org': true,
+          'geeksforgeeks.org': true
         },
         customPairs: {}, // Default value for invalid object
         debugMode: false // Default value for invalid boolean
@@ -199,6 +203,7 @@ describe('storage', () => {
           'leetcode.com': false,
           'leetcode.cn': true,
           'takeuforward.org': true,
+          'geeksforgeeks.org': true,
           'example.com': true
         },
         customPairs: { 'python': [['(', ')']] },
@@ -231,7 +236,8 @@ describe('storage', () => {
         siteEnabled: {
           'leetcode.com': true, // Default for invalid object
           'leetcode.cn': true,
-          'takeuforward.org': true
+          'takeuforward.org': true,
+          'geeksforgeeks.org': true
         },
         customPairs: { 'python': [['(', ')']] }, // Preserved valid value
         debugMode: false // Default for invalid boolean
@@ -259,7 +265,7 @@ describe('storage', () => {
       // Should only preserve valid customPairs entries
       expect(settings).toEqual({
         enabled: true,
-        siteEnabled: { 'leetcode.com': true, 'leetcode.cn': true, 'takeuforward.org': true },
+        siteEnabled: { 'leetcode.com': true, 'leetcode.cn': true, 'takeuforward.org': true, 'geeksforgeeks.org': true },
         customPairs: {
           'python': [['(', ')']], // Preserved valid entry
           'typescript': [['{', '}']] // Preserved valid entry
