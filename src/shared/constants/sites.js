@@ -31,15 +31,27 @@ const GFG_CONFIG = {
   ],
   waitStrategy: 'mutation-observer',
   editorApi: {
-    namespace: 'monaco',
+    namespace: 'ace',
     
     getEditors: () =>{
       //if monaco exists in current window
     //get editors, if editors found return them
-    if(window.monaco?.editor){
-      const editors = window.monaco.editor.getEditors()
-        if(editors.length) return editors;
+    // if(window.ace?.editor){
+    //   const editors = window.ace.editor.getEditors()
+    //     if(editors.length) return editors;
+    // }
+    const editors = [];
+    //const el = 
+    document.querySelectorAll('.ace_editor').forEach(el => {
+      if(el?.env?.editor) {
+      editors.push(el.env.editor);
     }
+    });
+    if(editors.length>0){
+    return editors;
+    }
+    
+  // }
     //check editor inside frame
     //check for all iframes
     //const iframes = document.querySelectorAll('iframe');
@@ -63,20 +75,22 @@ const GFG_CONFIG = {
     if(window.ace) {
       //intialize code editor instance 
       // returns API object
+      
       const el = document.querySelector('.ace_editor');
       if (el && el.env && el.env.editor) {
-        return [el.env.editor];
+        this.ace = el.env.editor.constructor;
+        return;
       }
     }
     //CodeMirror
-    const cm = document.querySelector('.CodeMirror');
-    if (cm) return [cm]
+    // const cm = document.querySelector('.CodeMirror');
+    // if (cm) return [cm]
 
     return [];
     },
-    keyCode: {
-      Tab: 3  // monaco.KeyCode.Tab
-    }
+    // keyCode: {
+    //   Tab: 3  // monaco.KeyCode.Tab
+    // }
   }
 };
 

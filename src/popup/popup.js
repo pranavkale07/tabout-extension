@@ -127,12 +127,12 @@ class PopupController {
       // Update editor status based on site config (more reliable than detection)
       if (siteConfig) {
         this.updateEditorStatus(siteConfig.editor, true); // Pass true to indicate it's active
-        setTimeoue(() => this.checkEditorPresence(), 1000);
+        setTimeout(() => this.checkEditorPresence(siteConfig), 1000);
       }
     } else {
       this.elements.siteStatusIcon.className = 'status-icon inactive';
       this.elements.siteStatusText.textContent = 'Not Supported';
-      this.elements.siteToggle.style.display = 'block';
+      this.elements.siteToggle.style.display = 'none';
       this.updateEditorStatus('Unknown', false);
     }
   }
@@ -201,7 +201,7 @@ class PopupController {
    * Check if editor is present on current page
    * (Optional verification - doesn't override the status set by updateEditorStatus)
    */
-  async checkEditorPresence() {
+  async checkEditorPresence(siteConfig) {
     if (!this.currentTab) return;
 
     try {
@@ -213,10 +213,11 @@ class PopupController {
 
       if (results && results[0] && results[0].result) {
         const { detected } = results[0].result;
-        if (!detected) {
+        if (!detected && !this.wasDetectedBefore) {
           // Only show warning if editor is not detected at all
           this.elements.editorStatusIcon.className = 'status-icon inactive';
-          this.elements.editorStatusText.textContent = 'Monaco (Loading...)';
+          const editorName = this.formatEditorName(siteConfig.editor);
+          this.elements.editorStatusText.textContent = `${editorName} (Loading...)`;
         }
         // If detected, keep the existing status from updateEditorStatus
       }
@@ -239,20 +240,21 @@ class PopupController {
       if (editors && editors.length > 0) {
         return { detected: true };
       }
-      // Ace support
-      if (window.ace && document.querySelector('.ace_editor')) {
+      
+    }
+    // Ace support
+    //const aceEl = document.querySelector('.ace_editor');
+      if (document.querySelector('.ace_editor')) {
         return { detected: true };
       }
       //CodeMirror Support
-      if (document.querySelector('.CodeMirror') || document.querySelector('.cm-editor')) {
-        return { detected: true };
-      }
-    }
-
+      // if (document.querySelector('.CodeMirror') || document.querySelector('.cm-editor')) {
+      //   return { detected: true };
+      // }
     // Check for CodeMirror
-    if (document.querySelector('.CodeMirror') || document.querySelector('.cm-editor')) {
-      return { detected: true };
-    }
+    // if (document.querySelector('.CodeMirror') || document.querySelector('.cm-editor')) {
+    //   return { detected: true };
+    // }
 
     // Check for our extension marker  
     if (window.__TABOUT_EXTENSION_LOADED) {

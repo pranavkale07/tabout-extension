@@ -9,7 +9,7 @@ class ContentScript {
   constructor() {
     //use top-level hostname if current context's hostname is missing
     let hostname = window.location.hostname;
-    if(!hostname || hostname === '' ) {
+    if(!hostname) {
       try {
         hostname = window.top.location.hostname;
       } catch (e) {

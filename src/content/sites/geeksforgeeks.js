@@ -20,27 +20,101 @@ export class GFGHandler {
   async initialize() {
     await this.waitForAce();
 
+    let attempts = 0;
+
+    while(attempts < 20) {
     const editor = this.getActiveEditor();
-    if (editor) {
-      editor.setBehavioursEnabled(false); //enable {}
+
+    if(editor) {
+      this.attachCommand(editor);
+      return;
+    }
+    await new Promise(r=> setTimeout(r,300));
+    attempts++;
+  }
+  console.warn('[Tabout][GFG] Editor not found for command binding');
+  }
+    attachCommand(editor) {
+      //editor.setBehavioursEnabled(false); //enable {}
       // editor.commands.removeCommand('indent'); //override Tab
       // editor.commands.removeCommand('insertTab');
 
-      editor.keyBinding.addKeyboardHandler({
-        handleKeyboard: (data, hashId, keyString, keyCode, event) =>{
-          if(keyString === 'Tab') {
-           const handled = this.handleTabKey(editor,event);
+      //editor.commands.addCommand({
+        // name: "tabout",
+        // bindKey: {win: "Tab", mac: "Tab"},
+        // exec: (editor) =>{
+        //   const handled = this.handleTabKey(editor);
+        //   if(!handled) {
+        //     //fallback -> normal tab
+        //     if(editor.session.getUseSoftTabs()) {
+        //       const size = editor.session.getTabSize();
+        //       editor.insert(" ".repeat(size));
+        //     } else {
+        //       editor.insert("\t");
+        //     }
+        //   }
+        // }
+        const originalHandler = editor.keyBinding.getKeyboardHandler();
 
-           if(handled){
-            //tabout applied 
-          return{
-            command: "null",
-            passEvent: false};
-           }
-           // no tabout - Ace handle tab/indent normally
-          return false;
-        
+        editor.keyBinding.setKeyboardHandler({
+        handleKeyboard: (data, hashId, keyString, keyCode, event) =>{
+          if(keyString === 'Tab' || keyCode === 9) {
+            //const activeEditor = this.getActiveEditor();
+            //if(!activeEditor) return null;
+           //const handled = this.handleTabKey(editor);
+
+           //if(handled){
+          //   tabout applied 
+          // return null;
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+
+          const pos = editor.getCursorPosition();
+          const line = editor.session.getLine(pos.row);
+
+          let i = pos.column;
+          while(i<line.length && /\s/.test(line[i])) i++;
+
+          const char = line[i];
+          const closing = new Set([")", "]", "}", '"', "'"]);
+          if(closing.has(char)){
+            editor.moveCursorTo(pos.row, i+1);
+            editor.clearSelection();
+
+          // event.preventDefault();
+          // event.stopPropagation();
+          // event.stopImmediatePropagation();
+
+            return {
+            command: "null" // block Ace
+          };
+
           }
+          const size = editor.session.getTabSize();
+          editor.insert(" ".repeat(size));
+
+          // event.preventDefault();
+          // event.stopPropagation();
+          // event.stopImmediatePropagation();
+          return {
+            command: "null" // block Ace
+          };
+        }
+          //  no tabout - Ace handle tab/indent normally
+          // let ace handle tab normally
+          //  }
+          //fallback: insert tab/spaces
+          // if(editor.session.getUseSoftTabs()){
+          //   const size = editor.session.getTabSize();
+          //   editor.insert(" ".repeat(size));
+          // }
+          // else {
+          //   editor.insert("\t");
+          // }
+          //  return {command: "null"};
+        
+          // }
 
         //stop ace completely
         // event.preventDefault();
@@ -48,18 +122,28 @@ export class GFGHandler {
         // event.stopImmediatePropagation();
         
         
-        }
+        //}
         //multiSelectAction: "forEach",
         // scrollIntoView: "cursor",
         // readOnly: false
+
+        //fallback to original
+        return originalHandler.handleKeyboard(
+          data,
+          hashId,
+          keyString,
+          keyCode,
+          event
+        );
+      }
       });
     }
     //this.bindGlobalHandler();
-    this.observeNewEditors();
-  }
+    //this.observeNewEditors();
+  //}
   
   /**
-   * Wait for Monaco editor to be available
+   * Wait for GFG editor to be available
    * @returns {Promise<void>}
    */
   async waitForAce() {
@@ -67,19 +151,33 @@ export class GFGHandler {
     const MAX_WAIT_ATTEMPTS = 20; // 10 seconds max (20 * 500ms)
     const WAIT_INTERVAL_MS = 500; // Check every 500ms
     
-    while (!window.ace && attempts < MAX_WAIT_ATTEMPTS) {
+    while (attempts < MAX_WAIT_ATTEMPTS) {
+      const el = document.querySelector('.ace_editor');
+
+      if(el && el.env && el.env.editor) {
+        //const el = document.querySelector('.ace_editor');
+
+        //if(el && el.env && el.env.editor.editor) {
+          this.ace = el.env.editor;
+          //.constructor;
+          if(this.debugMode) {
+            console.log('[Tabout][GFG] Ace editor detected via DOM');
+          }
+          return;
+        }
+      //}
       await new Promise(resolve => setTimeout(resolve, WAIT_INTERVAL_MS));
       attempts++;
     }
     
-    if (window.ace) {
-      this.ace = window.ace;
-      if (this.debugMode) {
-        console.log('[Tabout][GFG] Ace editor detected');
-      }
-    } else {
+    // if (window.ace) {
+    //   this.ace = window.ace;
+    //   if (this.debugMode) {
+    //     console.log('[Tabout][GFG] Ace editor detected');
+    //   }
+    // } else {
       console.warn('[Tabout][GFG] Ace editor not found after 10 seconds');
-    }
+    //}
   }
   
   /**
@@ -216,15 +314,36 @@ export class GFGHandler {
       // if (this.debugMode && editors.length > 0) {
       //   console.log('[Tabout][GFG] No active editor found among', editors.length, 'editors');
       // }
-      const el = document.querySelector('.ace_editor');
-      if(!el) return null;
-      try {
-        return this.ace.edit(el.id);
-      }
       
-      //return null;
-    //}
-     catch (error) {
+      try {
+        const editors = [];
+
+        document.querySelectorAll('.ace_editor').forEach(el =>{
+          if(el.env && el.env.editor) {
+            editors.push(el.env.editor);
+          }
+        });
+        //Iframe support
+        document.querySelectorAll('iframe').forEach(frame => {
+          try {
+            const doc = frame.contentDocument || frame.contentWindow?.document;
+            if(!doc) return;
+
+            doc.querySelectorAll('.ace_editor').forEach(el => {
+              if(el.env?.editor) editors.push(el.env.editor);
+            });
+          } catch(e) {
+            //cross-origin -> ignore
+          }
+        });
+        for(const ed of editors) {
+          if (ed.isFocused()) return ed;
+        }
+        return editors[0] || null;
+        // el = document.querySelector('.ace_editor');
+        // if(!el) return null;
+        // return this.ace.edit(el.id);
+      } catch (error) {
       console.error('[Tabout][GFG] Error finding active editor:', error);
       return null;
     }
@@ -260,7 +379,7 @@ export class GFGHandler {
     try {
       //const editor = ace.edit(document.querySelector('.ace_editor').id);
       const cursor = editor.getCursorPosition();
-      const totalLines = editor.session.getLength();
+      const line = editor.session.getLine(cursor.row);
       // console.log({
       //   line,
       //   cursorCol: cursor.column,
@@ -288,19 +407,23 @@ export class GFGHandler {
     //build closing set
     const closingSet = new Set(CHARACTER_SETS.map(p => p.close));
 
-    for(let row = cursor.row; row<totalLines; row++){
+    // for(let row = cursor.row; row<totalLines; row++){
 
-    const line = editor.session.getLine(row);
+    // const line = editor.session.getLine(row);
 
-    let scanColumn = (row === cursor.row) ? cursor.column : 0;
+    //find next meaningful character on current line only
+    let scanColumn = cursor.column;
     
     //peak ahead without modifying cursor
-      //let scanColumn = originalColumn;
+    //let scanColumn = originalColumn;
 
     //skip whitespaces to find next "meaningful" char
+    //if(!closingSet.has(line[scanColumn])){
+      //look ahead
     while(scanColumn< line.length && /\s/.test(line[scanColumn])){
       scanColumn++;
     }
+  //}
 
     // if we reached end => no tabout
     // if(scanColumn >=line.length) {
@@ -313,14 +436,20 @@ export class GFGHandler {
 
     const charAhead = line[scanColumn];
 
-    if(!charAhead) continue;
+    //if no character or not a closing bracket -> normal tab
+    if(!charAhead || !closingSet.has(charAhead)){
+      return false; //let Ace handle tab normally 
+    }
 
       //move one step back if we are on closing bracket
-      if(closingSet.has(charAhead)){
+      // if(){
         // const char = line[cursor.column]
-        const openingCol = shouldTabout(line,scanColumn, CHARACTER_SETS);
-        if (typeof openingCol === "number") {
-          const newColumn = scanColumn + 1;
+        //scan column points at closing bracket
+        const result = shouldTabout(line,scanColumn, CHARACTER_SETS);
+        if (typeof result !== "number") {
+          //const newColumn = scanColumn + 1;
+          return false; //not a valid tabout -> normal tab
+        }
         // Create new selection at tabout position
       //   const newPosition = new this.ace.Position(position.lineNumber, newColumn);
       //   const newSelection = new this.ace.Selection(
@@ -340,29 +469,37 @@ export class GFGHandler {
       //event.stopPropagation();
       //event.stopImmediatePropagation();
 
+      // move cursor PAST the closing bracket
+      const newColumn = scanColumn + 1;
       //move immediately
-      editor.moveCursorTo(row, newColumn) // shift forward
+      editor.moveCursorTo(cursor.row, newColumn) // shift forward
       editor.clearSelection(); 
-
+      editor.renderer.scrollCursorIntoView();
       //force it again after Ace finishes its async stuff
      
         //editor.moveCursorTo(cursor.row, newColumn) // shift forward
         //editor.clearSelection(); 
         //ensure renderer updates cursor position
         //force cursor to be shown in right place
-        requestAnimationFrame(() =>{
-          editor.renderer.updateCursor();
+        // requestAnimationFrame(() =>{
+        //   editor.renderer.updateCursor();
     
-          editor.renderer.scrollCursorIntoView();
-        });
+        //   editor.renderer.scrollCursorIntoView();
+        // });
+        // setTimeout(() => {
+        //   editor.moveCursorTo(cursor.row, newColumn);
+        //   editor.clearSelection();
+          
+        // },0);
         
         return true;
+        //{command: "null"}; //Tell Ace "I handled Tab"
         // if(closingSet.includes(char)) {
 
           //column--; //simulate cursor before closing bracket
         //}
-        }
-      }
+        //}
+      // }
         //fallback for normal tab 
         // event.preventDefault();
         // // use Ace's internal logic for string insertion
@@ -374,9 +511,9 @@ export class GFGHandler {
         // } else {
         //   editor.insert("\t");
         // }
-        break;
-        }
-        return false;
+        //break;
+        // }
+        // return false;
         //return;
         
 
@@ -410,6 +547,7 @@ export class GFGHandler {
     //   }
     } catch (error) {
       console.error('[Tabout][GFG] Error handling tab key:', error);
+      return false;
     }
   }
   

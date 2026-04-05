@@ -172,9 +172,10 @@ describe('sites', () => {
 
       expect(config.editor).toBe('monaco');
       
-      expect(config.selectors).toEqual('.monaco-editor');
-      expect(config.selectors).toEqual('.ace_editor');
-      expect(config.selectors).toEqual('.CodeMirror');
+      //expect(config.selectors).toEqual('.monaco-editor');
+      expect(config.selectors).toBe('.ace');
+      expect(config.selectors).toEqual(['.ace_editor']);
+      //expect(config.selectors).toEqual('.CodeMirror');
       expect(config.waitStrategy).toBe('mutation-observer');
     });
 
@@ -182,10 +183,10 @@ describe('sites', () => {
       const config = getSiteConfig('www.geeksforgeeks.org');
       
       expect(config).toBeDefined();
-      expect(config.editor).toBe('monaco');
-      expect(config.selectors).toEqual('.monaco-editor');
-      expect(config.selectors).toEqual('.ace_editor');
-      expect(config.selectors).toEqual('.CodeMirror');
+      expect(config.editor).toBe('.ace');
+      //expect(config.selectors).toEqual('.monaco-editor');
+      expect(config.selectors).toEqual(['.ace_editor']);
+      //expect(config.selectors).toEqual('.CodeMirror');
     });
 
     // test('should return geeksforgeeks config for contest.geeksforgeeks.org', () => {
