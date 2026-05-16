@@ -1,5 +1,5 @@
 import { StorageManager } from '../shared/utils/storage.js';
-import { getSupportedDomains, getSiteConfig } from '../shared/constants/sites.js';
+import { getSupportedDomains } from '../shared/constants/sites.js';
 
 /**
  * Options page controller
@@ -48,17 +48,11 @@ class OptionsPage {
     
     const supportedDomains = getSupportedDomains();
     
-    // For now, we only support LeetCode and it's already in the HTML
-    // When adding more sites, we can dynamically add them here
-    if (supportedDomains.length <= 1) {
-      return; // LeetCode is already displayed in HTML
-    }
-    
-    // Future: Add more sites dynamically
+    // LeetCode (leetcode.com) is already hardcoded in the HTML
+    // Skip leetcode.cn as it's the same platform
     supportedDomains.forEach(domain => {
-      if (domain === 'leetcode.com') return; // Already in HTML
-      
-      const siteConfig = getSiteConfig(domain);
+      if (domain === 'leetcode.com' || domain === 'leetcode.cn') return; // Already in HTML
+
       const siteName = this.formatSiteName(domain);
       
       // Create site item
@@ -90,8 +84,9 @@ class OptionsPage {
   formatSiteName(domain) {
     const nameMap = {
       'leetcode.com': 'LeetCode',
-      'leetcode.cn': 'LeetCode (CN)'
-      // Future sites can be added here automatically
+      'leetcode.cn': 'LeetCode (CN)',
+      'takeuforward.org': 'TakeUForward',
+      'geeksforgeeks.org': 'GeeksForGeeks'
     };
     return nameMap[domain] || domain.charAt(0).toUpperCase() + domain.slice(1).replace('.com', '');
   }

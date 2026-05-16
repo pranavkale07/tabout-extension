@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "TabOut for LeetCode",
+    "name": "TabOut",
     "version": "{{VERSION}}",
-    "description": "Tab out of brackets, quotes, etc in LeetCode's code editor",
+    "description": "Tab out of brackets, quotes, etc in online code editors",
     "permissions": [
         "storage",
         "scripting",
@@ -24,13 +24,17 @@
     },
     "action": {
         "default_popup": "popup.html",
-        "default_title": "TabOut for LeetCode"
+        "default_title": "TabOut"
     },
     "host_permissions": [
         "https://leetcode.cn/*",
         "https://*.leetcode.cn/*",
         "https://leetcode.com/*",
-        "https://*.leetcode.com/*"
+        "https://*.leetcode.com/*",
+        "https://takeuforward.org/*",
+        "https://*.takeuforward.org/*",
+        "https://geeksforgeeks.org/*",
+        "https://*.geeksforgeeks.org/*"
     ],
     "content_scripts": [
         {
@@ -46,7 +50,11 @@
                 "https://*.leetcode.cn/playground/*",
                 "https://*.leetcode.com/problems/*",
                 "https://*.leetcode.com/contest/*",
-                "https://*.leetcode.com/playground/*"
+                "https://*.leetcode.com/playground/*",
+                "https://takeuforward.org/plus*",
+                "https://*.takeuforward.org/plus*",
+                "https://geeksforgeeks.org/problems/*",
+                "https://*.geeksforgeeks.org/problems/*"
             ],
             "js": [
                 "content.js"
@@ -68,7 +76,11 @@
                 "https://leetcode.cn/*",
                 "https://*.leetcode.cn/*",
                 "https://leetcode.com/*",
-                "https://*.leetcode.com/*"
+                "https://*.leetcode.com/*",
+                "https://takeuforward.org/*",
+                "https://*.takeuforward.org/*",
+                "https://geeksforgeeks.org/*",
+                "https://*.geeksforgeeks.org/*"
             ]
         }
     ]

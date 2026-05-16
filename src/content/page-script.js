@@ -1,4 +1,5 @@
 import { LeetCodeHandler } from './sites/leetcode.js';
+import { GeeksForGeeksHandler } from './sites/geeksforgeeks.js';
 import { MessageBus, MESSAGE_TYPES } from '../shared/utils/messaging.js';
 import { getSiteConfig } from '../shared/constants/sites.js';
 
@@ -50,7 +51,7 @@ import { getSiteConfig } from '../shared/constants/sites.js';
               console.log('[Tabout][Page] New handler created and initialized');
             }
           }
-          
+
           // After initialization, ensure currentHandler points to global instance
           if (window.__TABOUT_HANDLER_INSTANCE && window.__TABOUT_HANDLER_INSTANCE !== currentHandler) {
             if (debugMode) {
@@ -58,14 +59,37 @@ import { getSiteConfig } from '../shared/constants/sites.js';
             }
             currentHandler = window.__TABOUT_HANDLER_INSTANCE;
           }
-          
+
           MessageBus.sendToContent(MESSAGE_TYPES.EDITOR_DETECTED, {
             site: hostname,
             editor: siteConfig.editor,
             ready: currentHandler.isReady()
           });
           break;
-          
+
+        case 'ace':
+          if (!currentHandler) {
+            currentHandler = new GeeksForGeeksHandler();
+            await currentHandler.initialize();
+            if (debugMode) {
+              console.log('[Tabout][Page] New Ace handler created and initialized');
+            }
+          }
+
+          if (window.__TABOUT_HANDLER_INSTANCE && window.__TABOUT_HANDLER_INSTANCE !== currentHandler) {
+            if (debugMode) {
+              console.log('[Tabout][Page] Updating currentHandler to point to global instance');
+            }
+            currentHandler = window.__TABOUT_HANDLER_INSTANCE;
+          }
+
+          MessageBus.sendToContent(MESSAGE_TYPES.EDITOR_DETECTED, {
+            site: hostname,
+            editor: siteConfig.editor,
+            ready: currentHandler.isReady()
+          });
+          break;
+
         default:
           console.log('[Tabout][Page] Handler not implemented for editor:', siteConfig.editor);
       }

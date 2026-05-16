@@ -1,14 +1,19 @@
-# Contributing to TabOut for LeetCode
+# Contributing to TabOut
 
 First off, thanks for taking the time to contribute! We're excited to welcome you to the TabOut community.
 
 ## Table of Contents
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [Development Process](#development-process)
-- [Pull Request Process](#pull-request-process)
-- [Style Guidelines](#style-guidelines)
-- [Reporting Bugs](#reporting-bugs)
+- [Contributing to TabOut](#contributing-to-tabout)
+  - [Table of Contents](#table-of-contents)
+  - [Code of Conduct](#code-of-conduct)
+  - [Getting Started](#getting-started)
+  - [Development Process](#development-process)
+  - [Pull Request Process](#pull-request-process)
+  - [Style Guidelines](#style-guidelines)
+    - [Commit Messages](#commit-messages)
+  - [Reporting Bugs](#reporting-bugs)
+  - [Feature Requests](#feature-requests)
+  - [Communication](#communication)
 
 ## Code of Conduct
 This project and everyone participating in it are governed by our Code of Conduct. By participating, you are expected to uphold this code. Please report unacceptable behavior to project maintainers.
@@ -33,7 +38,7 @@ This project and everyone participating in it are governed by our Code of Conduc
    ```bash
    git checkout -b feature/your-feature-name
    ```
-2. Make your changes and test thoroughly on LeetCode
+2. Make your changes and test thoroughly on LeetCode, TakeUForward, GeeksForGeeks
 3. Update documentation if necessary
 4. Run tests:
    ```bash
@@ -79,4 +84,4 @@ We love suggestions! Please:
 - For questions: Open a [Discussion](https://github.com/pranavkale07/tabout-extension/discussions)
 - For bugs and features: [GitHub Issues](https://github.com/pranavkale07/tabout-extension/issues)
 
-Thank you for contributing to TabOut for LeetCode!
+Thank you for contributing to TabOut!

@@ -57,7 +57,9 @@ export const STORAGE_TEST_CASES = [
       enabled: true,
       siteEnabled: {
         'leetcode.com': true,
-        'leetcode.cn': true
+        'leetcode.cn': true,
+        'takeuforward.org': true,
+        'geeksforgeeks.org': true
       },
       customPairs: {},
       debugMode: false
@@ -75,7 +77,9 @@ export const STORAGE_TEST_CASES = [
       enabled: false,
       siteEnabled: {
         'leetcode.com': false,
-        'leetcode.cn': true
+        'leetcode.cn': true,
+        'takeuforward.org': true,
+        'geeksforgeeks.org': true
       },
       customPairs: {},
       debugMode: false
@@ -108,6 +112,26 @@ export const SITES_TEST_CASES = [
   {
     description: 'Deep subdomain match',
     hostname: 'contest.leetcode.com',
+    expected: true
+  },
+  {
+    description: 'TakeUForward domain match',
+    hostname: 'takeuforward.org',
+    expected: true
+  },
+  {
+    description: 'TakeUForward www subdomain match',
+    hostname: 'www.takeuforward.org',
+    expected: true
+  },
+  {
+    description: 'GeeksForGeeks domain match',
+    hostname: 'geeksforgeeks.org',
+    expected: true
+  },
+  {
+    description: 'GeeksForGeeks www subdomain match',
+    hostname: 'www.geeksforgeeks.org',
     expected: true
   },
   {

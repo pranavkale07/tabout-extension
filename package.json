@@ -1,7 +1,7 @@
 {
-  "name": "Tabout for LeetCode",
-  "version": "0.2.0",
-  "description": "Tab out of brackets, quotes, etc in LeetCode's code editor",
+  "name": "TabOut",
+  "version": "0.3.0",
+  "description": "Tab out of brackets, quotes, etc in online code editors",
   "scripts": {
     "prebuild": "node scripts/update-readme-version.js",
     "build": "webpack --mode=production",
