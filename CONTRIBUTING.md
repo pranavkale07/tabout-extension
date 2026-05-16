@@ -38,7 +38,7 @@ This project and everyone participating in it are governed by our Code of Conduc
    ```bash
    git checkout -b feature/your-feature-name
    ```
-2. Make your changes and test thoroughly on LeetCode, TakeUForward
+2. Make your changes and test thoroughly on LeetCode, TakeUForward, GeeksForGeeks
 3. Update documentation if necessary
 4. Run tests:
    ```bash

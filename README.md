@@ -17,7 +17,7 @@
 
 - **Smart tab‑out** for `()`, `[]`, `{}`, `' '`, `" "`, `<>`, commas and semicolons
 - **Multiple cursor** support
-- **Works across various online coding platforms** with Monaco-based editors (LeetCode, TakeUForward)
+- **Works across various online coding platforms** (LeetCode, TakeUForward, GeeksForGeeks)
 - **Lightweight**: no UI clutter, minimal overhead
 - **Privacy-focused**: no data collection, local processing only
 
@@ -56,7 +56,7 @@
 
 ### Required Permissions
 - **Host**: Run only on supported coding platforms to access the editor context
-- **Scripting**: Inject a small page script to access Monaco APIs
+- **Scripting**: Inject a small page script to access editor APIs (Monaco, Ace)
 - **Storage**: Save minimal preferences (enable/disable, debug) in browser storage
 - **ActiveTab**: Read the active tab's hostname in the popup to display site status (privacy-focused alternative to broad tabs permission)
 
@@ -67,7 +67,7 @@ We welcome contributions! To report bugs, fix issues, or add features, visit the
 
 ## Future Enhancements
 
-- **More Platforms**: Support for other coding platforms (GeeksForGeeks, HackerRank, CodeChef, etc.)
+- **More Platforms**: Support for other coding platforms (HackerRank, CodeChef, etc.)
 - **Custom Delimiters**: User-defined tab-out patterns
 - **Keyboard Shortcuts**: Customizable key bindings
 
@@ -76,6 +76,7 @@ We welcome contributions! To report bugs, fix issues, or add features, visit the
 Special thanks to:
 - [TabOut (VS Code Extension)](https://marketplace.visualstudio.com/items?itemName=albert.TabOut) - The VS Code extension that inspired this project
 - [Monaco Editor](https://microsoft.github.io/monaco-editor/) - The powerful code editor that powers LeetCode, various online IDEs and VS Code
+- [Ace Editor](https://ace.c9.io/) - The code editor that powers GeeksForGeeks and many other platforms
 - The open-source community for inspiration and feedback
 
 ## License

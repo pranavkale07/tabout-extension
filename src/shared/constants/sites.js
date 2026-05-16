@@ -8,7 +8,7 @@
 
 /**
  * Configuration for supported coding sites
- * Currently supports: LeetCode, TakeUForward
+ * Currently supports: LeetCode, TakeUForward, GeeksForGeeks
  * Architecture allows easy addition of new sites in the future
  */
 const MONACO_CONFIG = {

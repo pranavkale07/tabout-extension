@@ -127,7 +127,7 @@ class PopupController {
       // Update editor status based on site config (more reliable than detection)
       if (siteConfig) {
         this.updateEditorStatus(siteConfig.editor, true); // Pass true to indicate it's active
-        await this.checkEditorPresence();
+        await this.checkEditorPresence(siteConfig);
       }
     } else {
       this.elements.siteStatusIcon.className = 'status-icon inactive';
@@ -146,7 +146,8 @@ class PopupController {
     const nameMap = {
       'leetcode.com': 'LeetCode',
       'leetcode.cn': 'LeetCode (CN)',
-      'takeuforward.org': 'TakeUForward'
+      'takeuforward.org': 'TakeUForward',
+      'geeksforgeeks.org': 'GeeksForGeeks'
     };
 
     // Find matching domain (handle subdomains)
@@ -191,6 +192,7 @@ class PopupController {
   formatEditorName(editorType) {
     const nameMap = {
       'monaco': 'Monaco',
+      'ace': 'Ace',
       'codemirror': 'CodeMirror'
     };
     return nameMap[editorType?.toLowerCase()] || editorType || 'Unknown';
@@ -200,7 +202,7 @@ class PopupController {
    * Check if editor is present on current page
    * (Optional verification - doesn't override the status set by updateEditorStatus)
    */
-  async checkEditorPresence() {
+  async checkEditorPresence(siteConfig) {
     if (!this.currentTab) return;
 
     try {
@@ -214,8 +216,9 @@ class PopupController {
         const { detected } = results[0].result;
         if (!detected) {
           // Only show warning if editor is not detected at all
+          const editorName = this.formatEditorName(siteConfig?.editor);
           this.elements.editorStatusIcon.className = 'status-icon inactive';
-          this.elements.editorStatusText.textContent = 'Monaco (Loading...)';
+          this.elements.editorStatusText.textContent = `${editorName} (Loading...)`;
         }
         // If detected, keep the existing status from updateEditorStatus
       }
@@ -230,9 +233,10 @@ class PopupController {
    * (Runs in the page's DOM, from the isolated world)
    */
   detectEditorOnPage() {
-    // Simple detection based on DOM only (Monaco editor container)
+    // Simple detection based on DOM (Monaco or Ace editor container)
     const monacoElement = document.querySelector('.monaco-editor');
-    return { detected: !!monacoElement };
+    const aceElement = document.querySelector('.ace_editor');
+    return { detected: !!(monacoElement || aceElement) };
   }
 
   /**
