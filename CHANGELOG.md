@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-05-16
+
+### Added
+- Support for GeeksForGeeks (geeksforgeeks.org) using the Ace editor
+- Ace editor integration alongside existing Monaco support
+
+### Changed
+- Popup editor status now displays the correct editor name (Monaco/Ace) based on the active site
+- Editor presence detection in popup now checks for both Monaco (`.monaco-editor`) and Ace (`.ace_editor`) containers
+- Options page renders supported sites dynamically instead of hardcoding LeetCode-only behavior
+- Updated documentation and acknowledgments to reflect multi-editor support
+
 ## [0.2.1] - 2026-02-04
 
 ### Added

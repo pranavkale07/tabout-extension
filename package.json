@@ -1,6 +1,6 @@
 {
   "name": "TabOut",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Tab out of brackets, quotes, etc in online code editors",
   "scripts": {
     "prebuild": "node scripts/update-readme-version.js",
