@@ -1,19 +1,35 @@
-import { StorageManager } from '../shared/utils/storage.js';
-import { getSiteConfig, isSupportedSite, getSupportedDomains } from '../shared/constants/sites.js';
+import { StorageManager, type ExtensionSettings } from '../shared/utils/storage';
+import { getSiteConfig, isSupportedSite, getSupportedDomains, type SiteConfig } from '../shared/constants/sites';
+
+interface PopupElements {
+  currentSite: HTMLElement;
+  globalEnabled: HTMLInputElement;
+  siteEnabled: HTMLInputElement;
+  siteToggle: HTMLElement;
+  siteToggleLabel: HTMLElement;
+  siteStatusIcon: HTMLElement;
+  siteStatusText: HTMLElement;
+  editorStatusIcon: HTMLElement;
+  editorStatusText: HTMLElement;
+  openOptions: HTMLElement;
+  mainToggle: HTMLElement;
+}
 
 /**
- * Popup controller for quick actions and status
+ * Popup controller for quick actions and status.
  */
 class PopupController {
-  constructor() {
-    this.currentTab = null;
-    this.elements = {};
-  }
+  private currentTab: { id?: number; url?: string } | null = null;
+  private elements!: PopupElements;
+  private settings: ExtensionSettings | { enabled: boolean; siteEnabled: Record<string, boolean> } = {
+    enabled: false,
+    siteEnabled: {},
+  };
 
   /**
-   * Initialize the popup
+   * Initialize the popup.
    */
-  async initialize() {
+  async initialize(): Promise<void> {
     this.bindElements();
     this.bindEventListeners();
     await this.getCurrentTab();
@@ -22,39 +38,39 @@ class PopupController {
   }
 
   /**
-   * Bind DOM elements
+   * Bind DOM elements.
    */
-  bindElements() {
+  bindElements(): void {
+    const byId = <T extends HTMLElement = HTMLElement>(id: string): T =>
+      document.getElementById(id) as T;
+
     this.elements = {
-      currentSite: document.getElementById('currentSite'),
-      globalEnabled: document.getElementById('globalEnabled'),
-      siteEnabled: document.getElementById('siteEnabled'),
-      siteToggle: document.getElementById('siteToggle'),
-      siteToggleLabel: document.getElementById('siteToggleLabel'),
-      siteStatusIcon: document.getElementById('siteStatusIcon'),
-      siteStatusText: document.getElementById('siteStatusText'),
-      editorStatusIcon: document.getElementById('editorStatusIcon'),
-      editorStatusText: document.getElementById('editorStatusText'),
-      openOptions: document.getElementById('openOptions'),
-      mainToggle: document.getElementById('mainToggle')
+      currentSite: byId('currentSite'),
+      globalEnabled: byId<HTMLInputElement>('globalEnabled'),
+      siteEnabled: byId<HTMLInputElement>('siteEnabled'),
+      siteToggle: byId('siteToggle'),
+      siteToggleLabel: byId('siteToggleLabel'),
+      siteStatusIcon: byId('siteStatusIcon'),
+      siteStatusText: byId('siteStatusText'),
+      editorStatusIcon: byId('editorStatusIcon'),
+      editorStatusText: byId('editorStatusText'),
+      openOptions: byId('openOptions'),
+      mainToggle: byId('mainToggle'),
     };
   }
 
   /**
-   * Bind event listeners
+   * Bind event listeners.
    */
-  bindEventListeners() {
-    // Global toggle
+  bindEventListeners(): void {
     this.elements.globalEnabled.addEventListener('change', () => {
       this.handleGlobalToggle();
     });
 
-    // Site-specific toggle
     this.elements.siteEnabled.addEventListener('change', () => {
       this.handleSiteToggle();
     });
 
-    // Open full options
     this.elements.openOptions.addEventListener('click', () => {
       browser.runtime.openOptionsPage();
       window.close();
@@ -69,21 +85,21 @@ class PopupController {
   }
 
   /**
-   * Get current active tab
+   * Get the current active tab.
    */
-  async getCurrentTab() {
+  async getCurrentTab(): Promise<void> {
     try {
       const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-      this.currentTab = tab;
+      this.currentTab = tab ?? null;
     } catch (error) {
       console.error('Failed to get current tab:', error);
     }
   }
 
   /**
-   * Load current extension state
+   * Load the current extension state.
    */
-  async loadCurrentState() {
+  async loadCurrentState(): Promise<void> {
     try {
       this.settings = await StorageManager.getSettings();
     } catch (error) {
@@ -93,40 +109,41 @@ class PopupController {
   }
 
   /**
-   * Update UI based on current state
+   * Update the UI based on the current state.
    */
-  async updateUI() {
-    if (!this.currentTab) {
+  async updateUI(): Promise<void> {
+    if (!this.currentTab || !this.currentTab.url) {
       this.showError('Unable to detect current tab');
       return;
     }
 
-    const hostname = new URL(this.currentTab.url).hostname;
+    let hostname: string;
+    try {
+      hostname = new URL(this.currentTab.url).hostname;
+    } catch {
+      this.showError('Unable to detect current tab');
+      return;
+    }
+
     const siteConfig = getSiteConfig(hostname);
     const isSupported = isSupportedSite(hostname);
 
-    // Update site display
     this.elements.currentSite.textContent = hostname;
-
-    // Update global toggle
     this.elements.globalEnabled.checked = this.settings.enabled;
 
-    // Update site status
     if (isSupported) {
       this.elements.siteStatusIcon.className = 'status-icon active';
       this.elements.siteStatusText.textContent = this.formatSiteName(hostname);
 
-      // Hide site-specific toggle since we only support LeetCode for now
-      // TODO: Re-enable when adding more sites
+      // Site-specific toggle is hidden for now (single global control).
       this.elements.siteToggle.style.display = 'none';
 
       // Still track the setting internally for future use
       const siteEnabled = await this.getSiteEnabledStatus(hostname);
       this.elements.siteEnabled.checked = siteEnabled;
 
-      // Update editor status based on site config (more reliable than detection)
       if (siteConfig) {
-        this.updateEditorStatus(siteConfig.editor, true); // Pass true to indicate it's active
+        this.updateEditorStatus(siteConfig.editor, true);
         await this.checkEditorPresence(siteConfig);
       }
     } else {
@@ -138,36 +155,31 @@ class PopupController {
   }
 
   /**
-   * Format domain name for display
-   * @param {string} hostname - Hostname to format
-   * @returns {string} - Formatted site name
+   * Format a domain name for display.
    */
-  formatSiteName(hostname) {
-    const nameMap = {
+  formatSiteName(hostname: string): string {
+    const nameMap: Record<string, string> = {
       'leetcode.com': 'LeetCode',
       'leetcode.cn': 'LeetCode (CN)',
       'takeuforward.org': 'TakeUForward',
-      'geeksforgeeks.org': 'GeeksForGeeks'
+      'geeksforgeeks.org': 'GeeksForGeeks',
     };
 
-    // Find matching domain (handle subdomains)
     for (const [domain, displayName] of Object.entries(nameMap)) {
       if (hostname === domain || hostname.endsWith('.' + domain)) {
         return displayName;
       }
     }
 
-    // Fallback: capitalize first letter
     return hostname.charAt(0).toUpperCase() + hostname.slice(1).replace('.com', '');
   }
 
   /**
-   * Get site-enabled status for hostname
+   * Get the site-enabled status for a hostname.
    */
-  async getSiteEnabledStatus(hostname) {
+  async getSiteEnabledStatus(hostname: string): Promise<boolean> {
     const siteEnabled = this.settings.siteEnabled || {};
 
-    // Check for exact match or domain match with secure matching
     for (const domain of Object.keys(siteEnabled)) {
       if (hostname === domain || hostname.endsWith('.' + domain)) {
         return siteEnabled[domain];
@@ -178,99 +190,89 @@ class PopupController {
   }
 
   /**
-   * Update editor status display
+   * Update the editor status display.
    */
-  updateEditorStatus(editorType, isActive = false) {
+  updateEditorStatus(editorType: string, isActive = false): void {
     const displayName = this.formatEditorName(editorType);
     this.elements.editorStatusText.textContent = isActive ? `${displayName} (Active)` : displayName;
     this.elements.editorStatusIcon.className = isActive ? 'status-icon active' : 'status-icon unknown';
   }
 
   /**
-   * Format editor type for display
+   * Format an editor type for display.
    */
-  formatEditorName(editorType) {
-    const nameMap = {
-      'monaco': 'Monaco',
-      'ace': 'Ace',
-      'codemirror': 'CodeMirror'
+  formatEditorName(editorType: string): string {
+    const nameMap: Record<string, string> = {
+      monaco: 'Monaco',
+      ace: 'Ace',
+      codemirror: 'CodeMirror',
     };
     return nameMap[editorType?.toLowerCase()] || editorType || 'Unknown';
   }
 
   /**
-   * Check if editor is present on current page
-   * (Optional verification - doesn't override the status set by updateEditorStatus)
+   * Check if the editor is present on the current page.
+   * (Optional verification - doesn't override the status set by updateEditorStatus.)
    */
-  async checkEditorPresence(siteConfig) {
-    if (!this.currentTab) return;
+  async checkEditorPresence(siteConfig: SiteConfig): Promise<void> {
+    if (!this.currentTab || this.currentTab.id == null) return;
 
     try {
-      // Only perform verification, don't override the display
       const results = await browser.scripting.executeScript({
         target: { tabId: this.currentTab.id },
-        function: this.detectEditorOnPage
+        func: this.detectEditorOnPage,
       });
 
-      if (results && results[0] && results[0].result) {
-        const { detected } = results[0].result;
-        if (!detected) {
-          // Only show warning if editor is not detected at all
-          const editorName = this.formatEditorName(siteConfig?.editor);
-          this.elements.editorStatusIcon.className = 'status-icon inactive';
-          this.elements.editorStatusText.textContent = `${editorName} (Loading...)`;
-        }
-        // If detected, keep the existing status from updateEditorStatus
+      const result = results?.[0]?.result as { detected: boolean } | undefined;
+      if (result && !result.detected) {
+        // Only show warning if the editor is not detected at all
+        const editorName = this.formatEditorName(siteConfig.editor);
+        this.elements.editorStatusIcon.className = 'status-icon inactive';
+        this.elements.editorStatusText.textContent = `${editorName} (Loading...)`;
       }
     } catch (error) {
       // Silently fail - might not have permission on this tab
-      console.log('Could not check editor presence:', error.message);
+      console.log('Could not check editor presence:', (error as Error).message);
     }
   }
 
   /**
-   * Function injected into page to detect editor
-   * (Runs in the page's DOM, from the isolated world)
+   * Function injected into the page to detect the editor.
+   * (Runs in the page's DOM.)
    */
-  detectEditorOnPage() {
-    // Simple detection based on DOM (Monaco or Ace editor container)
+  detectEditorOnPage(): { detected: boolean } {
     const monacoElement = document.querySelector('.monaco-editor');
     const aceElement = document.querySelector('.ace_editor');
     return { detected: !!(monacoElement || aceElement) };
   }
 
   /**
-   * Handle global toggle change
+   * Handle a global toggle change.
    */
-  async handleGlobalToggle() {
+  async handleGlobalToggle(): Promise<void> {
     try {
       const enabled = this.elements.globalEnabled.checked;
       await StorageManager.updateSetting('enabled', enabled);
-
-      // Update local state
       this.settings.enabled = enabled;
-
       console.log('Global tabout:', enabled ? 'enabled' : 'disabled');
     } catch (error) {
       console.error('Failed to update global setting:', error);
-      // Revert checkbox on error
       this.elements.globalEnabled.checked = !this.elements.globalEnabled.checked;
     }
   }
 
   /**
-   * Handle site-specific toggle change
+   * Handle a site-specific toggle change.
    */
-  async handleSiteToggle() {
-    if (!this.currentTab) return;
+  async handleSiteToggle(): Promise<void> {
+    if (!this.currentTab || !this.currentTab.url) return;
 
     try {
       const hostname = new URL(this.currentTab.url).hostname;
       const enabled = this.elements.siteEnabled.checked;
 
-      // Find the domain key for this hostname with secure matching
-      let domainKey = null;
-      const supportedDomains = getSupportedDomains(); // Single source of truth
+      let domainKey: string | null = null;
+      const supportedDomains = getSupportedDomains();
       for (const domain of supportedDomains) {
         if (hostname === domain || hostname.endsWith('.' + domain)) {
           domainKey = domain;
@@ -281,34 +283,30 @@ class PopupController {
       if (domainKey) {
         const updatedSiteEnabled = {
           ...this.settings.siteEnabled,
-          [domainKey]: enabled
+          [domainKey]: enabled,
         };
 
         await StorageManager.updateSetting('siteEnabled', updatedSiteEnabled);
-
-        // Update local state
         this.settings.siteEnabled = updatedSiteEnabled;
-
         console.log(`${domainKey} tabout:`, enabled ? 'enabled' : 'disabled');
       }
     } catch (error) {
       console.error('Failed to update site setting:', error);
-      // Revert checkbox on error
       this.elements.siteEnabled.checked = !this.elements.siteEnabled.checked;
     }
   }
 
   /**
-   * Show error state
+   * Show an error state.
    */
-  showError(message) {
+  showError(message: string): void {
     this.elements.currentSite.textContent = message;
     this.elements.siteStatusText.textContent = 'Error';
     this.elements.editorStatusText.textContent = 'Error';
   }
 }
 
-// Initialize popup when DOM is ready
+// Initialize popup when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   new PopupController().initialize();
 });

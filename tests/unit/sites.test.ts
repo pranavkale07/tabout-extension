@@ -1,5 +1,6 @@
-import { getSiteConfig, isSupportedSite } from '../../src/shared/constants/sites.js';
-import { SITES_TEST_CASES } from '../fixtures/test-data.js';
+import { describe, test, expect } from 'vitest';
+import { getSiteConfig, isSupportedSite } from '../../src/shared/constants/sites';
+import { SITES_TEST_CASES } from '../fixtures/test-data';
 
 describe('sites', () => {
   describe('getSiteConfig', () => {
@@ -7,74 +8,74 @@ describe('sites', () => {
       const config = getSiteConfig('leetcode.com');
       
       expect(config).toBeDefined();
-      expect(config.editor).toBe('monaco');
-      expect(config.selectors).toEqual(['.monaco-editor']);
-      expect(config.waitStrategy).toBe('mutation-observer');
+      expect(config!.editor).toBe('monaco');
+      expect(config!.selectors).toEqual(['.monaco-editor']);
+      expect(config!.waitStrategy).toBe('mutation-observer');
     });
 
     test('should return leetcode config for www.leetcode.com', () => {
       const config = getSiteConfig('www.leetcode.com');
       
       expect(config).toBeDefined();
-      expect(config.editor).toBe('monaco');
-      expect(config.selectors).toEqual(['.monaco-editor']);
+      expect(config!.editor).toBe('monaco');
+      expect(config!.selectors).toEqual(['.monaco-editor']);
     });
 
     test('should return leetcode config for contest.leetcode.com', () => {
       const config = getSiteConfig('contest.leetcode.com');
       
       expect(config).toBeDefined();
-      expect(config.editor).toBe('monaco');
-      expect(config.selectors).toEqual(['.monaco-editor']);
+      expect(config!.editor).toBe('monaco');
+      expect(config!.selectors).toEqual(['.monaco-editor']);
     });
 
     test('should return leetcode config for leetcode.cn', () => {
       const config = getSiteConfig('leetcode.cn');
       
       expect(config).toBeDefined();
-      expect(config.editor).toBe('monaco');
-      expect(config.selectors).toEqual(['.monaco-editor']);
-      expect(config.waitStrategy).toBe('mutation-observer');
+      expect(config!.editor).toBe('monaco');
+      expect(config!.selectors).toEqual(['.monaco-editor']);
+      expect(config!.waitStrategy).toBe('mutation-observer');
     });
 
     test('should return leetcode config for www.leetcode.cn', () => {
       const config = getSiteConfig('www.leetcode.cn');
       
       expect(config).toBeDefined();
-      expect(config.editor).toBe('monaco');
-      expect(config.selectors).toEqual(['.monaco-editor']);
-      expect(config.waitStrategy).toBe('mutation-observer');
+      expect(config!.editor).toBe('monaco');
+      expect(config!.selectors).toEqual(['.monaco-editor']);
+      expect(config!.waitStrategy).toBe('mutation-observer');
     });
 
     test('should return monaco config for takeuforward.org', () => {
       const config = getSiteConfig('takeuforward.org');
       
       expect(config).toBeDefined();
-      expect(config.editor).toBe('monaco');
-      expect(config.selectors).toEqual(['.monaco-editor']);
+      expect(config!.editor).toBe('monaco');
+      expect(config!.selectors).toEqual(['.monaco-editor']);
     });
 
     test('should return monaco config for www.takeuforward.org', () => {
       const config = getSiteConfig('www.takeuforward.org');
 
       expect(config).toBeDefined();
-      expect(config.editor).toBe('monaco');
+      expect(config!.editor).toBe('monaco');
     });
 
     test('should return ace config for geeksforgeeks.org', () => {
       const config = getSiteConfig('geeksforgeeks.org');
 
       expect(config).toBeDefined();
-      expect(config.editor).toBe('ace');
-      expect(config.selectors).toEqual(['.ace_editor']);
-      expect(config.waitStrategy).toBe('mutation-observer');
+      expect(config!.editor).toBe('ace');
+      expect(config!.selectors).toEqual(['.ace_editor']);
+      expect(config!.waitStrategy).toBe('mutation-observer');
     });
 
     test('should return ace config for www.geeksforgeeks.org', () => {
       const config = getSiteConfig('www.geeksforgeeks.org');
 
       expect(config).toBeDefined();
-      expect(config.editor).toBe('ace');
+      expect(config!.editor).toBe('ace');
     });
 
     test('should return null for unsupported domain', () => {
