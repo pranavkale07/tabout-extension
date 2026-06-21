@@ -2,7 +2,7 @@
 
 ![TabOut](src/assets/logos/tabout-icon-128_crp.png)
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-v0.2.1-green)](https://chromewebstore.google.com/detail/tabout-for-leetcode/eecmlpblnpechggegghledjledbkebfp)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-v0.3.0-green)](https://chromewebstore.google.com/detail/tabout-for-leetcode/eecmlpblnpechggegghledjledbkebfp)
 [![Firefox Add-ons](https://img.shields.io/badge/Firefox%20Add--ons-v0.2.0-orange)](https://addons.mozilla.org/en-US/firefox/addon/tabout-extension/)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/mv3/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

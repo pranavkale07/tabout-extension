@@ -1,65 +1,56 @@
-import { StorageManager } from '../shared/utils/storage.js';
-import { MessageBus, MESSAGE_TYPES } from '../shared/utils/messaging.js';
-import { getSiteConfig, isSupportedSite } from '../shared/constants/sites.js';
+import { StorageManager } from '../shared/utils/storage';
+import { MessageBus, MESSAGE_TYPES, type TaboutMessage } from '../shared/utils/messaging';
+import { isSupportedSite } from '../shared/constants/sites';
 
 /**
- * Main content script - runs in isolated world
+ * Main content script - runs in the isolated world.
  */
 class ContentScript {
+  private currentSite: string;
+  private pageScriptInjected = false;
+  private isUnloading = false;
+  private debugMode = false;
+
   constructor() {
     this.currentSite = window.location.hostname;
-    this.siteConfig = getSiteConfig(this.currentSite);
-    this.pageScriptInjected = false;
-    this.isUnloading = false;
-    this.debugMode = false;
 
-    // Avoid work during unload/navigation where extension context may be invalid
+    // Avoid work during unload/navigation where the extension context may be invalid
     window.addEventListener('beforeunload', () => {
       this.isUnloading = true;
     });
   }
 
   /**
-   * Initialize the content script
+   * Initialize the content script.
    */
-  async initialize() {
+  async initialize(): Promise<void> {
     if (this.isUnloading) return;
-    // Check if this site is supported
+
     if (!isSupportedSite(this.currentSite)) {
-      // Only log in debug mode
       if (this.debugMode) {
         console.log('[Tabout] Site not supported:', this.currentSite);
       }
       return;
     }
 
-    // Only log initialization in debug mode
     if (this.debugMode) {
       console.log('[Tabout] Initializing on:', this.currentSite);
     }
 
-    // Inject page script
     await this.injectPageScript();
-
-    // Send initial settings to page
     await this.sendInitialSettings();
-
-    // Listen for settings changes
     this.listenForSettingsChanges();
-
-    // Listen for messages from page script
     this.listenForPageMessages();
   }
 
   /**
-   * Inject the page script into the page context
+   * Inject the page script into the page context.
    */
-  async injectPageScript() {
+  async injectPageScript(): Promise<void> {
     if (this.pageScriptInjected) return;
     if (this.isUnloading) return;
 
     try {
-      // Wait for document head to be available
       await this.waitForDocumentHead();
 
       const script = document.createElement('script');
@@ -83,15 +74,15 @@ class ContentScript {
   }
 
   /**
-   * Wait for document.head to be available
+   * Wait for document.head to be available.
    */
-  async waitForDocumentHead() {
+  async waitForDocumentHead(): Promise<void> {
     let attempts = 0;
     const MAX_HEAD_WAIT_ATTEMPTS = 20; // 2 seconds max (20 * 100ms)
-    const HEAD_WAIT_INTERVAL_MS = 100; // Check every 100ms
+    const HEAD_WAIT_INTERVAL_MS = 100;
 
     while (!document.head && attempts < MAX_HEAD_WAIT_ATTEMPTS) {
-      await new Promise(resolve => setTimeout(resolve, HEAD_WAIT_INTERVAL_MS));
+      await new Promise((resolve) => setTimeout(resolve, HEAD_WAIT_INTERVAL_MS));
       attempts++;
     }
 
@@ -101,9 +92,9 @@ class ContentScript {
   }
 
   /**
-   * Send initial settings to the page script
+   * Send initial settings to the page script.
    */
-  async sendInitialSettings() {
+  async sendInitialSettings(): Promise<void> {
     try {
       if (this.isUnloading) return;
       const settings = await StorageManager.getSettings();
@@ -112,22 +103,20 @@ class ContentScript {
       // Store debug mode for this instance
       this.debugMode = settings.debugMode;
 
-      // Send settings to page
       MessageBus.sendToPage(MESSAGE_TYPES.SET_ENABLED, {
         globalEnabled: settings.enabled,
         siteEnabled,
-        site: this.currentSite
+        site: this.currentSite,
       });
 
       MessageBus.sendToPage(MESSAGE_TYPES.SET_DEBUG_MODE, {
-        debugMode: settings.debugMode
+        debugMode: settings.debugMode,
       });
 
-      // Only log in debug mode
       if (this.debugMode) {
         console.log('[Tabout] Initial settings sent:', {
           enabled: settings.enabled && siteEnabled,
-          debugMode: settings.debugMode
+          debugMode: settings.debugMode,
         });
       }
     } catch (error) {
@@ -136,38 +125,40 @@ class ContentScript {
   }
 
   /**
-   * Listen for storage changes and forward to page
+   * Listen for storage changes and forward them to the page.
    */
-  listenForSettingsChanges() {
+  listenForSettingsChanges(): void {
     StorageManager.onSettingsChanged(async (changes) => {
       try {
         if (this.isUnloading) return;
         if (changes.enabled || changes.siteEnabled) {
           const siteEnabled = await StorageManager.isEnabledForSite(this.currentSite);
 
-          // Fixed: Get current settings instead of assuming defaults to prevent race conditions
+          // Get current settings instead of assuming defaults to prevent race conditions
           const currentSettings = await StorageManager.getSettings();
-          const globalEnabled = changes.enabled?.newValue ?? currentSettings.enabled;
+          const globalEnabled =
+            (changes.enabled?.newValue as boolean | undefined) ?? currentSettings.enabled;
 
           if (this.debugMode) {
             console.log('[Tabout][Content] Settings change:', {
               changes,
               globalEnabled,
               siteEnabled,
-              site: this.currentSite
+              site: this.currentSite,
             });
           }
 
           MessageBus.sendToPage(MESSAGE_TYPES.SET_ENABLED, {
             globalEnabled,
             siteEnabled,
-            site: this.currentSite
+            site: this.currentSite,
           });
         }
 
         if (changes.debugMode) {
+          this.debugMode = Boolean(changes.debugMode.newValue);
           MessageBus.sendToPage(MESSAGE_TYPES.SET_DEBUG_MODE, {
-            debugMode: changes.debugMode.newValue
+            debugMode: changes.debugMode.newValue,
           });
         }
       } catch (error) {
@@ -177,10 +168,11 @@ class ContentScript {
   }
 
   /**
-   * Listen for messages from page script
+   * Listen for messages from the page script.
    */
-  listenForPageMessages() {
-    MessageBus.onMessageFromPage(async (message) => {
+  listenForPageMessages(): void {
+    MessageBus.onMessageFromPage(async (message: TaboutMessage) => {
+      const payload = message.payload as { requestSettings?: boolean } | undefined;
       switch (message.type) {
         case MESSAGE_TYPES.EDITOR_DETECTED:
           if (this.debugMode) {
@@ -195,8 +187,8 @@ class ContentScript {
           break;
 
         case MESSAGE_TYPES.PING:
-          // CRITICAL FIX: If page script requests settings, send current settings
-          if (message.payload?.requestSettings) {
+          // If the page script requests settings, send the current settings
+          if (payload?.requestSettings) {
             if (this.debugMode) {
               console.log('[Tabout][Content] Page script requesting current settings for cross-tab sync');
             }
@@ -218,9 +210,9 @@ class ContentScript {
   }
 
   /**
-   * Send current settings to page script (for cross-tab synchronization)
+   * Send current settings to the page script (for cross-tab synchronization).
    */
-  async sendCurrentSettingsToPage() {
+  async sendCurrentSettingsToPage(): Promise<void> {
     try {
       const settings = await StorageManager.getSettings();
       const siteEnabled = await StorageManager.isEnabledForSite(this.currentSite);
@@ -229,20 +221,18 @@ class ContentScript {
         console.log('[Tabout][Content] Sending current settings to page script:', {
           globalEnabled: settings.enabled,
           siteEnabled,
-          debugMode: settings.debugMode
+          debugMode: settings.debugMode,
         });
       }
 
-      // Send current enabled state
       MessageBus.sendToPage(MESSAGE_TYPES.SET_ENABLED, {
         globalEnabled: settings.enabled,
         siteEnabled,
-        site: this.currentSite
+        site: this.currentSite,
       });
 
-      // Send current debug mode
       MessageBus.sendToPage(MESSAGE_TYPES.SET_DEBUG_MODE, {
-        debugMode: settings.debugMode
+        debugMode: settings.debugMode,
       });
     } catch (error) {
       console.error('[Tabout][Content] Failed to send current settings:', error);
@@ -250,7 +240,7 @@ class ContentScript {
   }
 }
 
-// Initialize when DOM is ready
+// Initialize when the DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     new ContentScript().initialize();

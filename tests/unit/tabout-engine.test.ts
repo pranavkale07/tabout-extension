@@ -1,6 +1,7 @@
-import { shouldTabout } from '../../src/shared/core/tabout-engine.js';
-import { CHARACTER_SETS } from '../../src/shared/constants/character-sets.js';
-import { BRACKET_TEST_CASES } from '../fixtures/test-data.js';
+import { describe, test, expect } from 'vitest';
+import { shouldTabout } from '../../src/shared/core/tabout-engine';
+import { CHARACTER_SETS } from '../../src/shared/constants/character-sets';
+import { BRACKET_TEST_CASES } from '../fixtures/test-data';
 
 describe('tabout-engine', () => {
   describe('shouldTabout', () => {

@@ -1,133 +1,135 @@
-import { StorageManager } from '../shared/utils/storage.js';
-import { getSupportedDomains } from '../shared/constants/sites.js';
+import { StorageManager } from '../shared/utils/storage';
+import { getSupportedDomains } from '../shared/constants/sites';
+
+interface OptionsElements {
+  globalEnabled: HTMLInputElement;
+  debugMode: HTMLInputElement;
+  status: HTMLElement;
+  statusPill: HTMLElement | null;
+  linkGithub: HTMLAnchorElement | null;
+  linkReport: HTMLAnchorElement | null;
+  linkFeature: HTMLAnchorElement | null;
+  linkDonate: HTMLAnchorElement | null;
+  linkRequestPlatform: HTMLAnchorElement | null;
+}
 
 /**
- * Options page controller
+ * Options page controller.
  */
 class OptionsPage {
-  constructor() {
-    this.elements = {};
-    this.siteElements = new Map(); // Map to store dynamically created site elements
-    this.statusTimeout = null;
-  }
-  
+  private elements!: OptionsElements;
+  /** Per-site toggle inputs, keyed by domain (reserved for future use). */
+  private siteElements = new Map<string, HTMLInputElement>();
+  private statusTimeout: ReturnType<typeof setTimeout> | null = null;
+
   /**
-   * Initialize the options page
+   * Initialize the options page.
    */
-  async initialize() {
+  async initialize(): Promise<void> {
     this.bindElements();
     this.generateSiteSettings();
     this.bindEventListeners();
     await this.loadSettings();
   }
-  
+
   /**
-   * Bind static DOM elements
+   * Bind static DOM elements.
    */
-  bindElements() {
+  bindElements(): void {
     this.elements = {
-      globalEnabled: document.getElementById('globalEnabled'),
-      debugMode: document.getElementById('debugMode'),
-      status: document.getElementById('status'),
+      globalEnabled: document.getElementById('globalEnabled') as HTMLInputElement,
+      debugMode: document.getElementById('debugMode') as HTMLInputElement,
+      status: document.getElementById('status') as HTMLElement,
       statusPill: document.getElementById('statusPill'),
-      linkGithub: document.getElementById('linkGithub'),
-      linkReport: document.getElementById('linkReport'),
-      linkFeature: document.getElementById('linkFeature'),
-      linkDonate: document.getElementById('linkDonate'),
-      linkRequestPlatform: document.getElementById('linkRequestPlatform')
+      linkGithub: document.getElementById('linkGithub') as HTMLAnchorElement | null,
+      linkReport: document.getElementById('linkReport') as HTMLAnchorElement | null,
+      linkFeature: document.getElementById('linkFeature') as HTMLAnchorElement | null,
+      linkDonate: document.getElementById('linkDonate') as HTMLAnchorElement | null,
+      linkRequestPlatform: document.getElementById('linkRequestPlatform') as HTMLAnchorElement | null,
     };
   }
-  
+
   /**
-   * Dynamically generate site settings from supported domains
-   * Single source of truth from SITE_CONFIGS
+   * Dynamically generate the supported-sites list from supported domains.
+   * Single source of truth from SITE_CONFIGS.
    */
-  generateSiteSettings() {
+  generateSiteSettings(): void {
     const container = document.querySelector('.supported-sites');
     if (!container) return;
-    
+
     const supportedDomains = getSupportedDomains();
-    
-    // LeetCode (leetcode.com) is already hardcoded in the HTML
-    // Skip leetcode.cn as it's the same platform
-    supportedDomains.forEach(domain => {
-      if (domain === 'leetcode.com' || domain === 'leetcode.cn') return; // Already in HTML
+
+    // LeetCode (leetcode.com) is already hardcoded in the HTML.
+    // Skip leetcode.cn as it's the same platform.
+    supportedDomains.forEach((domain) => {
+      if (domain === 'leetcode.com' || domain === 'leetcode.cn') return;
 
       const siteName = this.formatSiteName(domain);
-      
-      // Create site item
+
       const siteItem = document.createElement('div');
       siteItem.className = 'site-item';
-      
+
       const siteNameSpan = document.createElement('span');
       siteNameSpan.className = 'site-name';
       siteNameSpan.textContent = siteName;
-      
+
       const siteStatusSpan = document.createElement('span');
       siteStatusSpan.className = 'site-status';
       siteStatusSpan.textContent = 'Active';
-      
+
       siteItem.appendChild(siteNameSpan);
       siteItem.appendChild(siteStatusSpan);
-      
+
       // Insert before the CTA paragraph
       const ctaParagraph = container.querySelector('.site-cta');
       container.insertBefore(siteItem, ctaParagraph);
     });
   }
-  
+
   /**
-   * Format domain name for display
-   * @param {string} domain - Domain name
-   * @returns {string} - Formatted site name
+   * Format a domain name for display.
    */
-  formatSiteName(domain) {
-    const nameMap = {
+  formatSiteName(domain: string): string {
+    const nameMap: Record<string, string> = {
       'leetcode.com': 'LeetCode',
       'leetcode.cn': 'LeetCode (CN)',
       'takeuforward.org': 'TakeUForward',
-      'geeksforgeeks.org': 'GeeksForGeeks'
+      'geeksforgeeks.org': 'GeeksForGeeks',
     };
     return nameMap[domain] || domain.charAt(0).toUpperCase() + domain.slice(1).replace('.com', '');
   }
-  
+
   /**
-   * Load current settings from storage
+   * Load current settings from storage.
    */
-  async loadSettings() {
+  async loadSettings(): Promise<void> {
     try {
       const settings = await StorageManager.getSettings();
-      
-      // Set global settings
+
       this.elements.globalEnabled.checked = settings.enabled;
       this.elements.debugMode.checked = settings.debugMode;
-      
-      // Update header status pill
+
       if (this.elements.statusPill) {
         this.elements.statusPill.textContent = settings.enabled ? 'Enabled' : 'Disabled';
         this.elements.statusPill.classList.toggle('enabled', !!settings.enabled);
         this.elements.statusPill.classList.toggle('disabled', !settings.enabled);
       }
-      
-      // Set site-specific settings dynamically
+
       this.siteElements.forEach((element, domain) => {
         element.checked = settings.siteEnabled[domain] ?? true;
       });
-      
     } catch (error) {
       console.error('Failed to load settings:', error);
       this.showStatus('Failed to load settings', 'error');
     }
   }
-  
+
   /**
-   * Bind event listeners for all elements
+   * Bind event listeners for all elements.
    */
-  bindEventListeners() {
-    // Global settings
+  bindEventListeners(): void {
     this.elements.globalEnabled.addEventListener('change', () => {
       this.saveSetting('enabled', this.elements.globalEnabled.checked);
-      // Reflect immediately on status pill
       if (this.elements.statusPill) {
         const enabled = this.elements.globalEnabled.checked;
         this.elements.statusPill.textContent = enabled ? 'Enabled' : 'Disabled';
@@ -135,47 +137,40 @@ class OptionsPage {
         this.elements.statusPill.classList.toggle('disabled', !enabled);
       }
     });
-    
+
     this.elements.debugMode.addEventListener('change', () => {
       this.saveSetting('debugMode', this.elements.debugMode.checked);
     });
-    
-    // Dynamic site settings - single source of truth
+
     this.siteElements.forEach((element, domain) => {
       element.addEventListener('change', () => {
         this.saveSiteSetting(domain, element.checked);
       });
     });
-    
+
     // External links
     const repo = 'https://github.com/pranavkale07/tabout-extension';
     if (this.elements.linkGithub) {
       this.elements.linkGithub.href = repo;
     }
     if (this.elements.linkReport) {
-      const issueUrl = `${repo}/issues/new?labels=bug&title=%5BBug%5D%3A%20&body=Describe%20the%20bug%20with%20steps%20to%20reproduce%2C%20expected%20vs%20actual%2C%20and%20environment.`;
-      this.elements.linkReport.href = issueUrl;
+      this.elements.linkReport.href = `${repo}/issues/new?labels=bug&title=%5BBug%5D%3A%20&body=Describe%20the%20bug%20with%20steps%20to%20reproduce%2C%20expected%20vs%20actual%2C%20and%20environment.`;
     }
     if (this.elements.linkFeature) {
-      const featureUrl = `${repo}/issues/new?labels=enhancement&title=%5BFeature%5D%3A%20&body=Describe%20the%20use%20case%20and%20benefit.`;
-      this.elements.linkFeature.href = featureUrl;
+      this.elements.linkFeature.href = `${repo}/issues/new?labels=enhancement&title=%5BFeature%5D%3A%20&body=Describe%20the%20use%20case%20and%20benefit.`;
     }
     if (this.elements.linkRequestPlatform) {
-      const platformUrl = `${repo}/issues/new?labels=enhancement&title=%5BPlatform%20Support%5D%3A%20&body=Which%20platform%20should%20TabOut%20support%3F%20Please%20add%20links%20and%20details.`;
-      this.elements.linkRequestPlatform.href = platformUrl;
+      this.elements.linkRequestPlatform.href = `${repo}/issues/new?labels=enhancement&title=%5BPlatform%20Support%5D%3A%20&body=Which%20platform%20should%20TabOut%20support%3F%20Please%20add%20links%20and%20details.`;
     }
     if (this.elements.linkDonate) {
-      // Temporary donation link
       this.elements.linkDonate.href = 'https://www.buymeacoffee.com/prxnav';
     }
   }
-  
+
   /**
-   * Save a general setting
-   * @param {string} key - Setting key
-   * @param {any} value - Setting value
+   * Save a general setting.
    */
-  async saveSetting(key, value) {
+  async saveSetting(key: string, value: unknown): Promise<void> {
     try {
       await StorageManager.updateSetting(key, value);
       this.showStatus('Settings saved!', 'success');
@@ -184,20 +179,18 @@ class OptionsPage {
       this.showStatus('Failed to save settings', 'error');
     }
   }
-  
+
   /**
-   * Save a site-specific setting
-   * @param {string} site - Site domain
-   * @param {boolean} enabled - Whether enabled for this site
+   * Save a site-specific setting.
    */
-  async saveSiteSetting(site, enabled) {
+  async saveSiteSetting(site: string, enabled: boolean): Promise<void> {
     try {
       const settings = await StorageManager.getSettings();
       const updatedSiteEnabled = {
         ...settings.siteEnabled,
-        [site]: enabled
+        [site]: enabled,
       };
-      
+
       await StorageManager.updateSetting('siteEnabled', updatedSiteEnabled);
       this.showStatus('Settings saved!', 'success');
     } catch (error) {
@@ -205,25 +198,20 @@ class OptionsPage {
       this.showStatus('Failed to save settings', 'error');
     }
   }
-  
+
   /**
-   * Show status message
-   * @param {string} message - Status message
-   * @param {string} type - Status type (success, error)
+   * Show a status message.
    */
-  showStatus(message, type = 'success') {
+  showStatus(message: string, type: 'success' | 'error' = 'success'): void {
     const statusEl = this.elements.status;
-    
-    // Clear existing timeout
+
     if (this.statusTimeout) {
       clearTimeout(this.statusTimeout);
     }
-    
-    // Set message and style
+
     statusEl.textContent = message;
     statusEl.className = `status ${type} show`;
-    
-    // Hide after 3 seconds  
+
     const STATUS_DISPLAY_DURATION_MS = 3000;
     this.statusTimeout = setTimeout(() => {
       statusEl.classList.remove('show');
@@ -231,7 +219,7 @@ class OptionsPage {
   }
 }
 
-// Initialize when DOM is ready
+// Initialize when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   new OptionsPage().initialize();
 });

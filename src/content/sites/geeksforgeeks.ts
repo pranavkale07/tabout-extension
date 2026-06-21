@@ -1,39 +1,35 @@
-import { shouldTabout } from '../../shared/core/tabout-engine.js';
-import { CHARACTER_SETS } from '../../shared/constants/character-sets.js';
+import { shouldTabout } from '../../shared/core/tabout-engine';
+import { CHARACTER_SETS } from '../../shared/constants/character-sets';
+import type { AceEditor, AceNamespace, TaboutHandler } from '../../types/globals';
 
 /**
- * GeeksForGeeks-specific handler for Ace editor
+ * GeeksForGeeks-specific handler for the Ace editor.
  */
-export class GeeksForGeeksHandler {
-  constructor() {
-    this.ace = null;
-    this.globalHandlerBound = false;
-    this.enabled = true;
-    this.debugMode = false;
-    this.mutationObserver = null;
-  }
+export class GeeksForGeeksHandler implements TaboutHandler {
+  private ace: AceNamespace | null = null;
+  enabled = true;
+  debugMode = false;
+  private mutationObserver: MutationObserver | null = null;
 
   /**
-   * Initialize the handler
-   * @returns {Promise<void>}
+   * Initialize the handler.
    */
-  async initialize() {
+  async initialize(): Promise<void> {
     await this.waitForAce();
     this.bindGlobalHandler();
     this.observeNewEditors();
   }
 
   /**
-   * Wait for Ace editor to be available
-   * @returns {Promise<void>}
+   * Wait for the Ace editor to be available.
    */
-  async waitForAce() {
+  async waitForAce(): Promise<void> {
     let attempts = 0;
     const MAX_WAIT_ATTEMPTS = 20; // 10 seconds max (20 * 500ms)
     const WAIT_INTERVAL_MS = 500;
 
     while (!window.ace && attempts < MAX_WAIT_ATTEMPTS) {
-      await new Promise(resolve => setTimeout(resolve, WAIT_INTERVAL_MS));
+      await new Promise((resolve) => setTimeout(resolve, WAIT_INTERVAL_MS));
       attempts++;
     }
 
@@ -48,9 +44,9 @@ export class GeeksForGeeksHandler {
   }
 
   /**
-   * Bind single global Tab handler that works with any active editor
+   * Bind a single global Tab handler that works with any active editor.
    */
-  bindGlobalHandler() {
+  bindGlobalHandler(): void {
     // Atomic check-and-set to avoid race conditions
     if (window.__TABOUT_GLOBAL_HANDLER_BOUND) {
       if (this.debugMode) {
@@ -61,7 +57,7 @@ export class GeeksForGeeksHandler {
     window.__TABOUT_GLOBAL_HANDLER_BOUND = true;
 
     try {
-      const globalTabHandler = (event) => {
+      const globalTabHandler = (event: KeyboardEvent) => {
         if (event.key !== 'Tab') return;
         if (!window.ace) return;
 
@@ -70,7 +66,7 @@ export class GeeksForGeeksHandler {
         if (enabledHandler && enabledHandler.debugMode) {
           console.log('[Tabout][GFG] Global Tab handler triggered', {
             hasHandler: !!enabledHandler,
-            handlerEnabled: enabledHandler?.enabled
+            handlerEnabled: enabledHandler?.enabled,
           });
         }
 
@@ -92,12 +88,6 @@ export class GeeksForGeeksHandler {
       window.__TABOUT_HANDLER_INSTANCE = this;
 
       if (this.debugMode) {
-        console.log('[Tabout][GFG] Global handler instance set');
-      }
-
-      this.globalHandlerBound = true;
-
-      if (this.debugMode) {
         console.log('[Tabout][GFG] Global Tab handler bound (singleton)');
       }
     } catch (error) {
@@ -107,25 +97,27 @@ export class GeeksForGeeksHandler {
   }
 
   /**
-   * Find an enabled handler instance (could be this or another instance)
+   * Find an enabled handler instance (could be this or another instance).
    */
-  findEnabledHandler() {
+  findEnabledHandler(): GeeksForGeeksHandler {
     if (window.__TABOUT_HANDLER_INSTANCE) {
-      return window.__TABOUT_HANDLER_INSTANCE;
+      return window.__TABOUT_HANDLER_INSTANCE as unknown as GeeksForGeeksHandler;
     }
     return this;
   }
 
   /**
-   * Find the currently active/focused Ace editor
-   * @returns {Object|null} - Active editor instance or null
+   * Find the currently active/focused Ace editor.
    */
-  getActiveEditor() {
+  getActiveEditor(): AceEditor | null {
     try {
+      const ace = this.ace;
+      if (!ace) return null;
+
       const editorElements = document.querySelectorAll('.ace_editor');
 
       for (const el of editorElements) {
-        const editor = this.ace.edit(el);
+        const editor = ace.edit(el);
         if (editor && editor.isFocused()) {
           return editor;
         }
@@ -136,7 +128,7 @@ export class GeeksForGeeksHandler {
       if (focusedElement) {
         for (const el of editorElements) {
           if (el.contains(focusedElement)) {
-            return this.ace.edit(el);
+            return ace.edit(el);
           }
         }
       }
@@ -153,11 +145,9 @@ export class GeeksForGeeksHandler {
   }
 
   /**
-   * Handle Tab key press in editor
-   * @param {Object} editor - Ace editor instance
-   * @param {Object} event - Keyboard event
+   * Handle a Tab key press in the editor.
    */
-  handleTabKey(editor, event) {
+  handleTabKey(editor: AceEditor, event: KeyboardEvent): void {
     if (!this.enabled) {
       if (this.debugMode) {
         console.log('[Tabout][GFG] Tab ignored - handler disabled');
@@ -179,7 +169,6 @@ export class GeeksForGeeksHandler {
       const cursor = editor.getCursorPosition(); // { row, column } (0-based)
       const lineText = session.getLine(cursor.row) || '';
 
-      // Use universal character sets
       const pairs = CHARACTER_SETS;
 
       // Ace uses 0-based columns, shouldTabout expects 1-based
@@ -190,9 +179,6 @@ export class GeeksForGeeksHandler {
           line: lineText,
           column: cursor.column,
           newColumn,
-          charBefore: lineText[cursor.column - 1],
-          charAt: lineText[cursor.column],
-          charAfter: lineText[cursor.column + 1]
         });
       }
 
@@ -214,9 +200,9 @@ export class GeeksForGeeksHandler {
   }
 
   /**
-   * Observe DOM for new editors with throttling
+   * Observe the DOM for new editors with throttling.
    */
-  observeNewEditors() {
+  observeNewEditors(): void {
     let lastCheck = 0;
     const THROTTLE_DELAY = 1000;
 
@@ -235,44 +221,41 @@ export class GeeksForGeeksHandler {
 
     this.mutationObserver.observe(document.documentElement, {
       childList: true,
-      subtree: true
+      subtree: true,
     });
   }
 
   /**
-   * Update enabled state
-   * @param {boolean} enabled - Whether tabout is enabled
+   * Update the enabled state.
    */
-  setEnabled(enabled) {
+  setEnabled(enabled: boolean): void {
     this.enabled = !!enabled;
 
     if (this.debugMode) {
       console.log(`[Tabout][GFG] setEnabled called: ${enabled}`, {
-        isGlobalInstance: window.__TABOUT_HANDLER_INSTANCE === this
+        isGlobalInstance: window.__TABOUT_HANDLER_INSTANCE === this,
       });
     }
   }
 
   /**
-   * Update debug mode
-   * @param {boolean} debug - Whether debug mode is enabled
+   * Update debug mode.
    */
-  setDebugMode(debug) {
+  setDebugMode(debug: boolean): void {
     this.debugMode = !!debug;
   }
 
   /**
-   * Check if Ace is available
-   * @returns {boolean} - Whether Ace is ready
+   * Check if Ace is available.
    */
-  isReady() {
+  isReady(): boolean {
     return !!(this.ace && window.ace);
   }
 
   /**
-   * Cleanup resources to prevent memory leaks
+   * Cleanup resources to prevent memory leaks.
    */
-  cleanup() {
+  cleanup(): void {
     if (this.mutationObserver) {
       this.mutationObserver.disconnect();
       this.mutationObserver = null;

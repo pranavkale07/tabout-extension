@@ -1,11 +1,12 @@
-import { MessageBus, MESSAGE_TYPES } from '../../src/shared/utils/messaging.js';
+import { describe, test, expect, beforeEach, vi } from 'vitest';
+import { MessageBus, MESSAGE_TYPES } from '../../src/shared/utils/messaging';
 
 describe('messaging', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    // Ensure window.postMessage is properly mocked
-    if (!window.postMessage.mockClear) {
-      window.postMessage = jest.fn();
+    vi.clearAllMocks();
+    // Ensure window.postMessage is mocked
+    if (!('mock' in window.postMessage)) {
+      window.postMessage = vi.fn() as unknown as typeof window.postMessage;
     }
   });
 
@@ -21,7 +22,7 @@ describe('messaging', () => {
 
     test('should send message to page', () => {
       // Clear previous calls
-      window.postMessage.mockClear();
+      vi.mocked(window.postMessage).mockClear();
       
       MessageBus.sendToPage('TEST_TYPE', { test: 'data' });
       
@@ -39,7 +40,7 @@ describe('messaging', () => {
 
     test('should send message to content', () => {
       // Clear previous calls
-      window.postMessage.mockClear();
+      vi.mocked(window.postMessage).mockClear();
       
       MessageBus.sendToContent('TEST_TYPE', { test: 'data' });
       
