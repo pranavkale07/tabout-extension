@@ -42,8 +42,8 @@
         "https://*.leetcode.com/problems/*",
         "https://*.leetcode.com/contest/*",
         "https://*.leetcode.com/playground/*",
-        "https://takeuforward.org/plus*",
-        "https://*.takeuforward.org/plus*",
+        "https://takeuforward.org/practice/*",
+        "https://*.takeuforward.org/practice/*",
         "https://geeksforgeeks.org/problems/*",
         "https://*.geeksforgeeks.org/problems/*"
       ],
